@@ -1,0 +1,53 @@
+<ion-content [fullscreen]="true" style="--background: #14405A" class="h-full">
+
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="flex flex-col md:flex-row bg-white rounded-[32px] w-full max-w-3xl sm:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto overflow-hidden shadow-2xl">
+
+      <!-- Formulario a la izquierda -->
+      <div class="md:w-1/2 p-10 lg:p-14 xl:p-20 flex flex-col justify-center rounded-t-[32px] md:rounded-tl-[32px] md:rounded-bl-[32px]">
+        <h1 class="text-3xl lg:text-4xl font-semibold mb-4 text-[#14405A]">Login</h1>
+        <p class="mb-10 text-base lg:text-lg text-gray-600">Ingresa tus datos para iniciar sesión</p>
+
+        <form class="flex flex-col space-y-8">
+          <!-- Input: Email -->
+          <div>
+            <input
+              type="text"
+              placeholder="Email o número"
+              class="w-full bg-transparent border-0 border-b-2 border-gray-300 focus:border-[#14405A] focus:outline-none placeholder-gray-500 pb-3 text-lg"
+            />
+          </div>
+
+          <!-- Input: Contraseña -->
+          <div>
+            <input
+              type="password"
+              placeholder="Contraseña"
+              class="w-full bg-transparent border-0 border-b-2 border-gray-300 focus:border-[#14405A] focus:outline-none placeholder-gray-500 pb-3 text-lg"
+            />
+          </div>
+
+          <div class="flex items-center justify-start gap-6">
+            <button
+              type="submit"
+              class="bg-[#1F8564] text-white px-8 py-3 rounded-md text-base font-medium hover:bg-[#17664d] transition-all"
+            >
+              Iniciar sesión
+            </button>
+            <a href="#" class="text-[#E94B4B] text-sm hover:underline">¿Olvidaste tu contraseña?</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Imagen a la derecha, más grande y clara -->
+      <div class="md:w-1/2">
+        <img
+          src="https://storage.googleapis.com/a1aa/image/65d54d14-87ba-4411-8b39-6539ee6d9d7e.jpg"
+          alt="Shopping cart"
+          class="w-full h-full object-cover"
+        />
+      </div>
+
+    </div>
+  </div>
+</ion-content>
