@@ -1,0 +1,45 @@
+<div class="container p-4 mt-5 mb-5 shadow-lg rounded" style="background-color: #ffffff; max-width: 480px;">
+  <h4 class="text-center mb-4" style="color: #1a73e8;">Crear Nuevo Empleado</h4>
+
+  <form>
+    <!-- Nombre -->
+    <div class="mb-3">
+      <label for="nombre" class="form-label">Nombre</label>
+      <input type="text" class="form-control rounded-pill shadow-sm" id="nombre" placeholder="Ej: Juan Pérez">
+    </div>
+
+    <!-- Dirección -->
+    <div class="mb-3">
+      <label for="direccion" class="form-label">Dirección</label>
+      <input type="text" class="form-control rounded-pill shadow-sm" id="direccion" placeholder="Ej: Calle 123, Ciudad">
+    </div>
+
+    <!-- Turno -->
+    <div class="mb-3">
+      <label for="turno" class="form-label">Turno</label>
+      <select class="form-select rounded-pill shadow-sm" id="turno">
+        <option selected disabled>Selecciona un turno</option>
+        <option value="mañana">Mañana</option>
+        <option value="tarde">Tarde</option>
+        <option value="noche">Noche</option>
+      </select>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label for="email" class="form-label">Correo electrónico</label>
+      <input type="email" class="form-control rounded-pill shadow-sm" id="email" placeholder="ejemplo@correo.com">
+    </div>
+
+    <!-- Contraseña -->
+    <div class="mb-4">
+      <label for="password" class="form-label">Contraseña</label>
+      <input type="password" class="form-control rounded-pill shadow-sm" id="password" placeholder="••••••••">
+    </div>
+
+    <!-- Botón de Crear -->
+    <div class="d-grid">
+      <button type="submit" class="btn btn-primary rounded-pill shadow">Crear empleado</button>
+    </div>
+  </form>
+</div>
