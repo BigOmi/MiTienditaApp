@@ -1,0 +1,28 @@
+
+
+.buscador-personalizado {
+  --background: #ffffff;
+  --color: #1f2937;
+  --placeholder-color: #9ca3af;
+  --border-radius: 8px;
+  --icon-color: #10b981;
+  height: 40px;
+  max-width: 280px;
+  width: 100%;
+
+  input {
+    font-size: 14px;
+    padding-left: 10px;
+  }
+
+  input::-webkit-search-cancel-button,
+  input[type="search"]::-moz-search-clear,
+  ion-searchbar .searchbar-clear-button {
+    display: none !important;
+  }
+}
+
+/* Agrega una sombra suave al fondo blanco para separar visualmente en la parte baja */
+.shadow-sm {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
+}

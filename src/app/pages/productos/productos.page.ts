@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProductosPage implements OnInit {
 
-    searchText = '';
+  buscarproduct = '';
   categorias: string[] = ['Todos', 'Ropa', 'Electrónica', 'Hogar', 'Juguetes', 'Accesorios'];
   categoriaSeleccionada: string = 'Todos';
   estadoFiltro: string = 'todos';
@@ -51,8 +51,8 @@ export class ProductosPage implements OnInit {
   get productosFiltrados() {
     return this.productos.filter(p => {
       const coincideBusqueda =
-        p.nombre.toLowerCase().includes(this.searchText.toLowerCase()) ||
-        p.descripcion.toLowerCase().includes(this.searchText.toLowerCase());
+        p.nombre.toLowerCase().includes(this.buscarproduct.toLowerCase()) ||
+        p.descripcion.toLowerCase().includes(this.buscarproduct.toLowerCase());
 
       const coincideEstado =
         this.estadoFiltro === 'todos' ||
