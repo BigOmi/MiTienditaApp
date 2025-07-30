@@ -1,20 +1,13 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+<!-- Estructura recomendada para home.page.html -->
+<div class="main-layout">
+  <div class="sidebar-wrapper">
+    <app-sidebar></app-sidebar>
   </div>
-</ion-content>
+  <div class="main-content-wrapper">
+    <app-topbar></app-topbar>
+    <div class="page-content">
+      <!-- Aquí va el router-outlet o el contenido de la página -->
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
