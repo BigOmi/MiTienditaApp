@@ -1,0 +1,31 @@
+.buscador-personalizado {
+  --background: #ffffff;
+  --color: #1f2937;
+  --placeholder-color: #9ca3af;
+  --border-radius: 12px;
+  --icon-color: #10b981;
+  height: 48px;
+
+  /* Aseguramos que el input ocupe todo el ancho visible y tenga buen padding */
+  input {
+    font-size: 16px;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    width: 100% !important;
+  }
+
+  /* Ocultar la X en navegadores WebKit */
+  input::-webkit-search-cancel-button {
+    display: none !important;
+  }
+
+  /* Ocultar la X en Firefox */
+  input[type="search"]::-moz-search-clear {
+    display: none !important;
+  }
+}
+
+/* Ocultar el botón clear nativo de ion-searchbar */
+ion-searchbar .searchbar-clear-button {
+  display: none !important;
+}

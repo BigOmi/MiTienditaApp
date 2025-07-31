@@ -1,0 +1,41 @@
+<ion-content class="bg-[#14405A] min-h-screen flex justify-center items-start">
+  <div class="bg-[#F6F8F7] w-full max-w-[1200px] mx-auto mt-10 p-4 rounded-[20px]">
+    <div class="grid grid-cols-12 gap-6">
+      <!-- Tarjetas de resumen -->
+      <ng-container *ngFor="let card of summaryCards">
+        <div class="col-span-12 md:col-span-4">
+          <div [ngClass]="card.bgClass" class="rounded-2xl p-8 flex flex-col justify-center items-center shadow-lg">
+            <p class="font-semibold text-lg text-center mb-2" [ngClass]="card.textClass">{{ card.title }}</p>
+            <p class="text-4xl font-normal drop-shadow text-center" [ngClass]="card.textClass">{{ card.value }}</p>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Gráfico -->
+      <div class="col-span-12 md:col-span-8 mt-4">
+        <div class="bg-white rounded-2xl p-8 shadow-lg min-h-[320px] flex flex-col">
+          <p class="font-semibold mb-2 text-[#91ADBB]">Total Units by Month and Manufacturer</p>
+          <p class="mb-2 text-gray-500 text-sm">
+            <span *ngFor="let manufacturer of chartData.manufacturers; let last = last">
+              {{ manufacturer }}<span *ngIf="!last"> ● </span>
+            </span>
+          </p>
+          <!-- <ion-img [src]="chartData.image" alt="Sales chart" class="w-full h-full object-contain"></ion-img> -->
+        </div>
+      </div>
+
+      <!-- Ventas recientes -->
+      <div class="col-span-12 md:col-span-4 mt-4">
+        <div class="bg-white rounded-2xl p-8 shadow-lg">
+          <p class="font-semibold text-center mb-2 text-[#189176]">Ventas recientes</p>
+          <div class="flex flex-col gap-3 text-base">
+            <div *ngFor="let sale of recentSales" class="flex justify-between border-b border-gray-300 pb-1">
+              <span class="font-bold">{{ sale.amount | currency }}</span>
+              <span class="text-gray-500">{{ sale.status }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

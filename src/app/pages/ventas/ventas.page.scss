@@ -1,0 +1,75 @@
+.modal-detalle {
+  --background: #fff;
+
+  ion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #4caf50;
+    background-color: #e8f5e9;
+    padding: 8px 16px;
+
+    h2.titulo-detalle {
+      font-size: 20px;
+      color: #388e3c;
+      border-bottom: 2px solid #4caf50;
+      padding-bottom: 5px;
+      margin: 0;
+    }
+
+    .cerrar-icono {
+      font-size: 24px;
+      color: #c62828;
+      cursor: pointer;
+    }
+  }
+}
+
+.buscador-personalizado {
+  --background: #f1f8e9;
+  --color: #2e7d32;
+  --placeholder-color: #81c784;
+  --border-radius: 12px;
+  --box-shadow: none;
+  padding: 12px;
+
+  input {
+    font-size: 16px !important;
+    height: 48px !important;
+    padding: 0 12px !important;
+  }
+}
+
+.buscador-personalizado {
+  --background: #ffffff;
+  --color: #1f2937; // texto
+  --placeholder-color: #9ca3af; // gris claro
+  --border-radius: 30px;
+  --icon-color: #10b981; // verde
+  width: 100%;
+  max-width: 320px;
+  height: 48px;
+
+  input {
+    font-size: 16px;
+    padding-left: 12px;
+  }
+
+  .searchbar-clear-button {
+    display: none !important; // fuerza ocultamiento de la X
+  }
+}
+/* Ocultar la X nativa del input tipo search en navegadores WebKit (Chrome, Edge, Safari) */
+ion-searchbar input::-webkit-search-cancel-button {
+  display: none !important;
+}
+
+/* Ocultar la X nativa del input tipo search en Firefox */
+ion-searchbar input[type="search"]::-moz-search-clear {
+  display: none !important;
+}
+
+/* Ocultar el botón clear propio de ion-searchbar */
+ion-searchbar .searchbar-clear-button {
+  display: none !important;
+}

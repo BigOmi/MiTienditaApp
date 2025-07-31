@@ -1,0 +1,120 @@
+<ion-content [fullscreen]="true" class="p-4 min-h-[80vh]">
+  <div class="bg-[#F3F4F6] rounded-[32px] p-6 md:p-10 min-h-[80vh]">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+  <h1 class="text-2xl font-semibold text-gray-800">Ventas</h1>
+
+  <div class="flex flex-row items-center gap-4 w-full md:w-auto">
+    <ion-searchbar
+      [(ngModel)]="busqueda"
+      placeholder="Buscar ventas..."
+      showClearButton="never"
+      debounce="300"
+      class="buscador-personalizado max-w-[320px] w-full"
+    ></ion-searchbar>
+
+    <ion-select
+      placeholder="Filtro fecha"
+      interface="popover"
+      [(ngModel)]="filtroFecha"
+      (ionChange)="filtrarVentas()"
+      class="min-w-[150px]"
+    >
+      <ion-select-option value="ninguno">Ninguno</ion-select-option>
+      <ion-select-option value="dia">Por Día</ion-select-option>
+      <ion-select-option value="semana">Por Semana</ion-select-option>
+      <ion-select-option value="mes">Por Mes</ion-select-option>
+    </ion-select>
+
+    <div class="relative">
+      <ion-icon
+        name="calendar-outline"
+        class="text-2xl text-gray-600 cursor-pointer"
+        (click)="toggleCalendar()"
+      ></ion-icon>
+
+      <ion-datetime
+        *ngIf="showCalendar"
+        [(ngModel)]="fechaSeleccionada"
+        (ionChange)="onFechaChange($event)"
+        presentation="date"
+        class="absolute top-full right-0 mt-1 z-50 bg-white rounded-md border border-gray-300 p-2"
+        style="width: 220px;"
+      >
+      </ion-datetime>
+    </div>
+  </div>
+</div>
+
+
+    <div class="bg-white rounded-2xl overflow-x-auto p-4 shadow">
+      <table class="w-full table-auto text-left">
+        <thead class="text-sm text-gray-500 border-b">
+          <tr>
+            <th class="p-3">ID Venta</th>
+            <th class="pb-2">CANTIDAD PRODUCTOS</th>
+            <th class="p-3">Usuario</th>
+            <th class="p-3">Método Pago</th>
+            <th class="pb-2">TOTAL</th>
+            <th class="pb-2">FECHA</th>
+            <th class="pb-2">HORA</th>
+            <th class="pb-2">STATUS</th>
+            <th class="p-3">Detalles</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let venta of ventasFiltradas" class="border-b text-sm text-gray-700">
+            <td class="p-3">{{ venta.id }}</td>
+            <td class="py-3">{{ venta.cantidad }}</td>
+            <td class="py-3">{{ venta.usuario }}</td>
+            <td class="py-3">{{ venta.metodoPago }}</td>
+            <td class="py-3 font-medium">${{ venta.total }}</td>
+            <td class="py-3">{{ venta.fecha }}</td>
+            <td class="py-3">{{ venta.hora }}</td>
+            <td class="py-3 text-gray-500">{{ venta.status }}</td>
+            <td class="p-3">
+              <button (click)="verDetalles(venta)" class="text-green-600 underline hover:opacity-80">
+                Ver ticket
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-6 flex justify-end">
+      <div class="bg-green-600 text-white px-6 py-3 rounded-xl shadow text-center">
+        <p class="text-sm">Total vendido</p>
+        <p class="text-xl font-semibold">${{ totalVendido }}</p>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Modal -->
+<ion-modal [isOpen]="modalAbierto" (didDismiss)="cerrarModal()" backdropDismiss="true">
+  <ng-template>
+    <ion-header class="ion-padding flex justify-between items-center border-b border-green-600 bg-green-50">
+      <h2 class="text-green-700 font-semibold text-lg border-b-2 border-green-500 pb-1 m-0">Detalle de la Venta</h2>
+      <ion-icon
+        name="close-outline"
+        class="cursor-pointer text-2xl text-red-500"
+        (click)="cerrarModal()">
+      </ion-icon>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <p><strong>ID:</strong> {{ detalleVenta.id }}</p>
+      <p><strong>Fecha:</strong> {{ detalleVenta.fecha }}</p>
+      <p><strong>Hora:</strong> {{ detalleVenta.hora }}</p>
+      <p><strong>Status:</strong> {{ detalleVenta.status }}</p>
+
+      <ion-list>
+        <ion-item *ngFor="let producto of detalleVenta.productos">
+          {{ producto.nombre }} ({{ producto.cantidad }} x {{ producto.precio }}$)
+        </ion-item>
+      </ion-list>
+
+      <p class="mt-4"><strong>Total:</strong> {{ calcularTotal(detalleVenta.productos) }}$</p>
+    </ion-content>
+  </ng-template>
+</ion-modal>
