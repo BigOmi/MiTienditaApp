@@ -1,0 +1,47 @@
+.topbar {
+  background: #04273A;
+  border-radius: 0 0 24px 24px;
+  margin: 0 0 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  min-height: 70px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.title {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-left: 0;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+ion-button {
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0 18px;
+  background: #FFC107 !important;
+  color: #153D56 !important;
+}
+
+ion-avatar img {
+  border-radius: 50%;
+  border: 2px solid #fff;
+  width: 40px;
+  height: 40px;
+}

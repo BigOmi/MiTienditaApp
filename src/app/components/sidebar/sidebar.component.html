@@ -1,0 +1,22 @@
+<div class="sidebar-content flex flex-col h-full min-h-screen bg-[#052E42]">
+  <div class="sidebar-header flex flex-col items-center bg-[#04273A] pt-8 pb-6">
+    <img src="assets/logo.jpg" alt="Logo" class="sidebar-logo w-16 h-16 rounded-xl bg-white object-cover" />
+  </div>
+  <ul class="flex-1 mt-6 px-0">
+    <li *ngFor="let p of appPages">
+      <a
+        [routerLink]="p.url"
+        routerDirection="root"
+        (click)="selectedPath = p.url"
+        [ngClass]="{
+          'sidebar-item-active': selectedPath === p.url,
+          'sidebar-item': selectedPath !== p.url
+        }"
+        class="flex items-center gap-3 px-4 py-2 mx-3 my-2 rounded-lg font-medium text-base transition-colors duration-200"
+      >
+        <ion-icon [name]="p.icon" class="text-xl"></ion-icon>
+        <span>{{ p.title }}</span>
+      </a>
+    </li>
+  </ul>
+</div>
