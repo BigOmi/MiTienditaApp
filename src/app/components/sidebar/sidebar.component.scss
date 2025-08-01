@@ -2,7 +2,6 @@
   background: transparent;
   color: #91ADBB;
   cursor: pointer;
-  /* Quitar hover oscuro */
 }
 .sidebar-item:hover,
 .sidebar-item:active {
@@ -12,10 +11,4 @@
 .sidebar-item-active {
   background: #189176 !important;
   color: #F6F8F7  !important;
-}
-.sidebar-logo {
-  /* Ya está en tailwind, pero puedes dejar esto si quieres */
-}
-.sidebar-title {
-  /* Ya está en tailwind */
 }

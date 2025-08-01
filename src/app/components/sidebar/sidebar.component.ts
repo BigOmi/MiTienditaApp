@@ -15,12 +15,12 @@ export class SidebarComponent  implements OnInit {
   constructor() { }
 
   public appPages = [
-    { title: 'Dashboard', url: '/dashboard', icon: 'grid' },
-    { title: 'Ventas', url: '/ventas', icon: 'bar-chart' },
-    { title: 'Productos', url: '/productos', icon: 'cube' },
-    { title: 'Trabajadores', url: '/trabajadores', icon: 'people' },
-    { title: 'Reportes', url: '/reportes', icon: 'document-text' },
-    { title: 'Configuración', url: '/configuracion', icon: 'settings' },
+    { title: 'Dashboard', url: '/home/dashboard', icon: 'grid' },
+    { title: 'Ventas', url: '/home/ventas', icon: 'bar-chart' },
+    { title: 'Productos', url: '/home/productos', icon: 'cube' },
+    { title: 'Trabajadores', url: '/home/usuarios', icon: 'people' },
+    // { title: 'Reportes', url: '/reportes', icon: 'document-text' },
+    // { title: 'Configuración', url: '/configuracion', icon: 'settings' },
   ];
 
   public selectedPath = '/dashboard';
