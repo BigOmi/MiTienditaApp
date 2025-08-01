@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { NewProductoComponent } from './new-producto/new-producto.component';
+import { NuevaVentaComponent } from './nueva-venta/nueva-venta.component';
 
 const routes: Routes = [
   {
@@ -15,6 +17,11 @@ const routes: Routes = [
     path: 'new-empleado',
     loadChildren: () => import('./new-empleado/new-empleado.module').then( m => m.NewEmpleadoPageModule)
   },
+  { path: 'new-producto', 
+    component: NewProductoComponent},
+    
+    { path: 'new-venta', 
+    component: NuevaVentaComponent},
 
 ];
 
