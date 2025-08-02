@@ -9,16 +9,21 @@ import { Router } from '@angular/router';
 })
 export class ForgotPasswordPage implements OnInit {
 
+    email: string = '';
+    
   constructor(
     private router: Router // Importa Router para la navegación
   ) { }
 
-  ngOnInit() {
+
+  onSubmit() {
+    if (this.email) {
+      console.log('Restablecer contraseña para:', this.email);
+      // Aquí podrías usar un servicio para enviar el email
+    }
   }
 
-  goBack() {
-  this.router.navigate(['/login'], { replaceUrl: true });
-
-}
+  ngOnInit() {
+  }
 
 }

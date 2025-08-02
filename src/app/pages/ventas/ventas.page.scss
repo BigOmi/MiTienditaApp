@@ -1,75 +1,158 @@
-.modal-detalle {
-  --background: #fff;
+.ventas-content {
+  background-color: #f6f8f7 !important;
+  --background: transparent !important;
 
-  ion-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #4caf50;
-    background-color: #e8f5e9;
-    padding: 8px 16px;
-
-    h2.titulo-detalle {
-      font-size: 20px;
-      color: #388e3c;
-      border-bottom: 2px solid #4caf50;
-      padding-bottom: 5px;
-      margin: 0;
-    }
-
-    .cerrar-icono {
-      font-size: 24px;
-      color: #c62828;
-      cursor: pointer;
-    }
-  }
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.buscador-personalizado {
-  --background: #f1f8e9;
-  --color: #2e7d32;
-  --placeholder-color: #81c784;
+.contenedor-principal {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  min-height: 100%;
+  background: transparent;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.buscador {
+  --background: var(--ion-color-light);
+  --color: var(--ion-color-dark);
+  --placeholder-color: var(--ion-color-medium);
+  --icon-color: var(--ion-color-success);
   --border-radius: 12px;
-  --box-shadow: none;
-  padding: 12px;
-
-  input {
-    font-size: 16px !important;
-    height: 48px !important;
-    padding: 0 12px !important;
-  }
-}
-
-.buscador-personalizado {
-  --background: #ffffff;
-  --color: #1f2937; // texto
-  --placeholder-color: #9ca3af; // gris claro
-  --border-radius: 30px;
-  --icon-color: #10b981; // verde
   width: 100%;
-  max-width: 320px;
+  max-width: 300px;
   height: 48px;
+}
 
-  input {
-    font-size: 16px;
-    padding-left: 12px;
+.filtro-fecha-con-calendario {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icono-calendario {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.calendario {
+  font-size: 24px;
+  color: var(--ion-color-dark);
+  cursor: pointer;
+}
+
+.datetime-inline {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  z-index: 10;
+  background: white;
+  border: 1px solid var(--ion-color-medium);
+  border-radius: 8px;
+  padding: 8px;
+  max-width: 240px;
+
+  /* Color de selección más suave */
+  --background-selected: rgba(0, 128, 0, 0.15);
+  --color-selected: var(--ion-color-success);
+  --background-selected-hover: rgba(0, 128, 0, 0.25);
+}
+
+.semana-rango {
+  font-size: 0.95rem;
+  color: var(--ion-color-medium);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+.tabla-card {
+  background: white;
+  border-radius: 16px;
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.ventas-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  th {
+    padding: 10px;
+    color: var(--ion-color-medium);
+    background-color: var(--ion-color-light-shade);
+    text-align: left;
   }
 
-  .searchbar-clear-button {
-    display: none !important; // fuerza ocultamiento de la X
+  td {
+    padding: 10px;
+    border-bottom: 1px solid var(--ion-color-light-tint);
   }
 }
-/* Ocultar la X nativa del input tipo search en navegadores WebKit (Chrome, Edge, Safari) */
-ion-searchbar input::-webkit-search-cancel-button {
-  display: none !important;
+
+.ver-ticket {
+  color: var(--ion-color-success);
+  text-decoration: underline;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
-/* Ocultar la X nativa del input tipo search en Firefox */
-ion-searchbar input[type="search"]::-moz-search-clear {
-  display: none !important;
+.total-vendido {
+  align-self: flex-end;
+  background: var(--ion-color-success);
+  color: var(--ion-color-success-contrast);
+  padding: 12px 20px;
+  border-radius: 16px;
+  text-align: center;
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  strong {
+    font-size: 1.5rem;
+  }
 }
 
-/* Ocultar el botón clear propio de ion-searchbar */
-ion-searchbar .searchbar-clear-button {
-  display: none !important;
+@media (max-width: 768px) {
+  .filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ventas-tabla {
+    font-size: 12px;
+
+    th,
+    td {
+      padding: 6px;
+    }
+  }
+
+  .titulo {
+    font-size: 1.2rem;
+  }
 }

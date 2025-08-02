@@ -1,41 +1,54 @@
-<div class="bg-[#F6F8F7] min-h-screen w-full flex justify-center items-start">
-  <div class="w-full max-w-[1200px] mx-auto p-4 rounded-[20px]">
-    <div class="grid grid-cols-12 gap-6">
-      <!-- Tarjetas de resumen -->
-      <ng-container *ngFor="let card of summaryCards">
-        <div class="col-span-12 md:col-span-4">
-          <div [ngClass]="card.bgClass" class="rounded-2xl p-8 flex flex-col justify-center items-center shadow-lg">
-            <p class="font-semibold text-lg text-center mb-2" [ngClass]="card.textClass">{{ card.title }}</p>
-            <p class="text-4xl font-normal drop-shadow text-center" [ngClass]="card.textClass">{{ card.value }}</p>
-          </div>
-        </div>
-      </ng-container>
+<ion-content class="dashboard-content">
+  <ion-grid class="dashboard-grid">
 
-      <!-- Gráfico -->
-      <div class="col-span-12 md:col-span-8 mt-4">
-        <div class="bg-white rounded-2xl p-8 shadow-lg min-h-[320px] flex flex-col">
-          <p class="font-semibold mb-2 text-[#91ADBB]">Total Units by Month and Manufacturer</p>
-          <p class="mb-2 text-gray-500 text-sm">
-            <span *ngFor="let manufacturer of chartData.manufacturers; let last = last">
-              {{ manufacturer }}<span *ngIf="!last"> ● </span>
-            </span>
-          </p>
-          <!-- Aquí tu gráfico -->
-        </div>
-      </div>
+    <!-- Tarjetas resumen -->
+    <ion-row>
+      <ion-col size="12" size-md="4" *ngFor="let card of summaryCards">
+        <ion-card class="summary-card" [ngClass]="card.bgClass">
+          <ion-card-header>
+            <ion-card-title class="summary-title" [ngClass]="card.textClass">{{ card.title }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="summary-value" [ngClass]="card.textClass">{{ card.value }}</div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
 
-      <!-- Ventas recientes -->
-      <div class="col-span-12 md:col-span-4 mt-4">
-        <div class="bg-white rounded-2xl p-8 shadow-lg">
-          <p class="font-semibold text-center mb-2 text-[#189176]">Ventas recientes</p>
-          <div class="flex flex-col gap-3 text-base">
-            <div *ngFor="let sale of recentSales" class="flex justify-between border-b border-gray-300 pb-1">
-              <span class="font-bold">{{ sale.amount | currency }}</span>
-              <span class="text-gray-500">{{ sale.status }}</span>
+    <!-- Gráfico y Ventas recientes -->
+    <ion-row>
+      <ion-col size="12" size-md="8">
+        <ion-card class="section-card full-height">
+          <ion-card-header>
+            <ion-card-title class="text-tertiary">Total Units by Month and Manufacturer</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="manufacturer-list">
+              <span *ngFor="let manufacturer of chartData.manufacturers; let last = last">
+                {{ manufacturer }}<span *ngIf="!last"> ● </span>
+              </span>
+            </p>
+            <div class="chart-placeholder">[ Aquí irá el gráfico ]</div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-md="4">
+        <ion-card class="section-card full-height">
+          <ion-card-header>
+            <ion-card-title class="text-success text-center">Ventas recientes</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="ventas-recientes-content">
+            <div class="recent-sales">
+              <div class="sale-item" *ngFor="let sale of recentSales">
+                <span class="sale-amount">{{ sale.amount | currency }}</span>
+                <span class="sale-status">{{ sale.status }}</span>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>

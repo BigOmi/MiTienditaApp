@@ -11,34 +11,34 @@ export class DashboardPage implements OnInit {
   summaryCards = [
     {
       title: 'Vendido este mes',
-      value: '$12,450',
-      bgClass: 'bg-white',
-      textClass: 'text-black'
+      value: '$12,000',
+      bgClass: 'bg-tertiary',
+      textClass: 'text-light'
     },
     {
       title: 'Vendido hoy',
       value: '$2,300',
-      bgClass: 'bg-[#189176]',
-      textClass: 'text-white'
+      bgClass: 'bg-success',
+      textClass: 'text-light'
     },
     {
       title: 'Reportes',
-      value: '6',
-      bgClass: 'bg-white',
-      textClass: 'text-black'
+      value: '34 generados',
+      bgClass: 'bg-warning',
+      textClass: 'text-light'
     }
   ];
 
   chartData = {
-    manufacturers: ['Aliqui', 'Natura', 'Pirum', 'VanArsdel'],
+    manufacturers: ['Aliqui', 'Natura', 'Pirum', 'VanArsdel']
   };
 
   recentSales = [
-    { amount: 1050, status: 'Completado' },
-    { amount: 345, status: 'Completado' },
-    { amount: 740, status: 'Completado' },
-    { amount: 125, status: 'Completado' }
+    { amount: 1500, status: 'Completado' },
+    { amount: 1100, status: 'Pendiente' },
+    { amount: 900, status: 'Fallido' }
   ];
+
 
   ngOnInit() {
   }

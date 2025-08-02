@@ -1,0 +1,140 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.login-content {
+  --background: var(--ion-color-primary);
+}
+
+.card-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  border-radius: 28px;
+  overflow: hidden;
+  background-color: var(--ion-color-light);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
+
+.image-side {
+  background-color: var(--ion-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-left: 1px solid #eee;
+}
+
+.form-side {
+  padding: 32px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-box {
+  width: 100%;
+  max-width: 360px;
+  margin: auto;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin-bottom: 24px;
+}
+
+.input-item {
+  --background: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.custom-label {
+  font-size: 14px;
+  color: var(--ion-color-dark);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.custom-input {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 15px;
+  color: var(--ion-color-dark);
+  border: none;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+  --placeholder-color: var(--ion-color-medium);
+}
+
+.custom-input::placeholder {
+  color: var(--ion-color-medium);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.submit-button {
+  font-size: 16px;
+  --border-radius: 12px;
+  --background: var(--ion-color-success);
+  --background-hover: var(--ion-color-success-shade);
+}
+
+.forgot-button {
+  --padding-start: 0;
+  --padding-end: 0;
+  font-size: 14px;
+  color: var(--ion-color-danger);
+  --background: transparent;
+  --background-hover: transparent;
+  --ion-color-base: var(--ion-color-danger);
+  text-align: left;
+}
+
+.error-message {
+  margin-top: 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .form-side {
+    padding: 24px 16px;
+  }
+
+  .image-side {
+    height: 220px;
+  }
+
+  .login-image {
+    border-left: none;
+    border-top: 1px solid #eee;
+  }
+}
