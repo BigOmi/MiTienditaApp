@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { NewProductoComponent } from './new-producto/new-producto.component';
 import { NuevaVentaComponent } from './nueva-venta/nueva-venta.component';
+import { NewEmpleadoPage } from './new-empleado/new-empleado.page';
 
 const routes: Routes = [
   {
@@ -14,8 +15,8 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'new-empleado',
-    loadChildren: () => import('./new-empleado/new-empleado.module').then( m => m.NewEmpleadoPageModule)
+  path: 'new-empleado',
+  component: NewEmpleadoPage
   },
   { path: 'new-producto', 
     component: NewProductoComponent},

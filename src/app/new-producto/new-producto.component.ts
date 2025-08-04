@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -6,9 +7,9 @@ import { ReactiveFormsModule } from '@angular/forms';
   selector: 'app-new-producto',
   templateUrl: './new-producto.component.html',
   styleUrls: ['./new-producto.component.scss'],
-  imports:[ReactiveFormsModule,]
+  imports:[ReactiveFormsModule,CommonModule]
 })
-export class NewProductoComponent implements OnInit {
+export class NewProductoComponent {
   productoForm!: FormGroup;
 
   constructor(private fb: FormBuilder) {}
