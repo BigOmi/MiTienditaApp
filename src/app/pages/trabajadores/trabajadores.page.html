@@ -1,13 +1,13 @@
 <ion-content [fullscreen]="true" class="trabajadores-content">
   <ion-grid class="ion-padding">
 
-    <!-- Filtros y búsqueda -->
-    <ion-row class="ion-align-items-center filtros-row">
+    <!-- Filtros -->
+    <ion-row class="ion-align-items-center filtros-row" no-wrap>
       <ion-col size="12" size-md="5">
         <ion-searchbar
           [(ngModel)]="busqueda"
           debounce="300"
-          placeholder="Buscar trabajador..."
+          placeholder="Buscar usuario..."
           class="searchbar-custom"
         ></ion-searchbar>
       </ion-col>
@@ -35,41 +35,92 @@
       </ion-col>
     </ion-row>
 
-    <!-- Lista de usuarios -->
+    <!-- Lista de usuarios + formulario de edición debajo de cada uno -->
     <ion-row class="ion-margin-top">
       <ion-col size="12" *ngFor="let usuario of usuariosFiltrados()">
         <ion-card class="usuario-card">
           <ion-row class="ion-align-items-center">
-
-            <!-- Imagen -->
-            <ion-col size="3" size-sm="2" class="img-mini-col">
+            <ion-col size="3" class="img-mini-col">
               <ion-avatar class="usuario-avatar">
                 <img [src]="usuario.imagen" alt="Foto" />
               </ion-avatar>
             </ion-col>
 
-            <!-- Información -->
-            <ion-col size="6" size-sm="8" class="info-mini-col">
+            <ion-col size="6" class="info-mini-col">
               <h3 class="usuario-nombre">{{ usuario.nombre }} {{ usuario.apellido }}</h3>
               <p class="usuario-email">{{ usuario.email }}</p>
-              <p class="usuario-rol">{{ usuario.rol | titlecase }} | {{ usuario.edad }} años</p>
-              <p class="usuario-fecha">{{ usuario.created_at | date:'dd MMM yyyy' }}</p>
+              <p class="usuario-rol">{{ usuario.rol }} | {{ usuario.edad }} años</p>
+              <p class="usuario-fecha">{{ usuario.created_at | date }}</p>
             </ion-col>
 
-            <!-- Acciones -->
-            <ion-col size="3" size-sm="2" class="acciones-mini-col">
-              <ion-button fill="clear" color="tertiary" size="small">
+            <ion-col size="3" class="acciones-mini-col">
+              <ion-button fill="clear" color="tertiary" size="small" (click)="editarUsuario(usuario)">
                 <ion-icon name="create-outline" slot="icon-only"></ion-icon>
               </ion-button>
-              <ion-button fill="clear" color="danger" size="small">
+              <ion-button fill="clear" color="danger" size="small" (click)="eliminarUsuario(usuario.id)">
                 <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
               </ion-button>
             </ion-col>
-
           </ion-row>
+        </ion-card>
+
+        <!-- Formulario de edición debajo del usuario seleccionado -->
+        <ion-card *ngIf="usuarioEditandoId === usuario.id" class="form-edicion-card">
+          <ion-card-header>
+            <ion-card-title>Editar Usuario</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <form [formGroup]="editForm" (ngSubmit)="guardarCambios()">
+              <ion-item>
+                <ion-label position="floating">Nombre</ion-label>
+                <ion-input formControlName="nombre"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">Apellido</ion-label>
+                <ion-input formControlName="apellido"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">Email</ion-label>
+                <ion-input formControlName="email" type="email"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">Edad</ion-label>
+                <ion-input formControlName="edad" type="number"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label>Rol</ion-label>
+                <ion-select formControlName="rol">
+                  <ion-select-option value="admin">Admin</ion-select-option>
+                  <ion-select-option value="empleado">Empleado</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">URL Imagen</ion-label>
+                <ion-input formControlName="imagen"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">Contraseña</ion-label>
+                <ion-input
+                  [type]="mostrarPassword ? 'text' : 'password'"
+                  formControlName="contraseña"
+                ></ion-input>
+                <ion-button fill="clear" slot="end" size="small" (click)="togglePasswordVisibility()" type="button">
+                  <ion-icon [name]="mostrarPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+                </ion-button>
+              </ion-item>
+
+              <ion-button expand="block" type="submit" [disabled]="editForm.invalid">Guardar Cambios</ion-button>
+              <ion-button expand="block" color="medium" type="button" (click)="cancelarEdicion()">Cancelar</ion-button>
+            </form>
+          </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
-
   </ion-grid>
 </ion-content>
