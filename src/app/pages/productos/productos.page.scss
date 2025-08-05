@@ -30,6 +30,32 @@ ion-content {
   --padding-end: 8px;
 }
 
+/* Formulario de edición */
+ion-card {
+  margin-bottom: 16px;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+ion-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+}
+
+ion-item {
+  --inner-padding-end: 10px;
+  margin-bottom: 8px;
+}
+
+ion-input, ion-select {
+  width: 100%;
+}
+
+ion-button {
+  margin-top: 8px;
+}
+
 /* Tarjeta de producto */
 .producto-mini-card {
   border-radius: 12px;
@@ -128,5 +154,19 @@ ion-content {
 
   .producto-mini-card {
     padding: 10px;
+  }
+
+  ion-card-title {
+    font-size: 1rem;
+  }
+
+  .producto-nombre {
+    font-size: 0.95rem;
+  }
+
+  .producto-precio,
+  .producto-stock,
+  .producto-estado {
+    font-size: 0.75rem;
   }
 }
