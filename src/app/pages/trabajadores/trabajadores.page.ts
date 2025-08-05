@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: false,
@@ -8,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TrabajadoresPage implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) {}
 
   busqueda: string = '';
   filtroRol: string = '';
@@ -110,9 +111,8 @@ export class TrabajadoresPage implements OnInit {
 }
 
 
-  agregarUsuario() {
-    // Aquí irá tu lógica para agregar un nuevo usuario
-    console.log('Agregar usuario');
+  navNewUser() {
+    this.router.navigateByUrl('/new-empleado');
   }
 
   ngOnInit() {

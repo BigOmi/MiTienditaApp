@@ -1,23 +1,25 @@
 <ion-content [fullscreen]="true" class="login-content">
-  <ion-grid>
-    <ion-row class="ion-justify-content-center ion-align-items-center">
-      <ion-col size="12" size-md="10" size-lg="8" class="card-wrapper">
+  <ion-grid class="full-height">
+    <ion-row class="ion-justify-content-center ion-align-items-center full-height">
+      <ion-col size="12" size-md="10" size-lg="8">
         <ion-card class="login-card">
-          <!-- Imagen lado derecho -->
-          <ion-col size="12" size-md="6" class="image-side">
-            <img
-              src="https://storage.googleapis.com/a1aa/image/65d54d14-87ba-4411-8b39-6539ee6d9d7e.jpg"
-              alt="Login image"
-              class="login-image"
-            />
-          </ion-col>
 
-          <ion-row class="ion-align-items-stretch">
-            <!-- Formulario lado izquierdo -->
-            <ion-col size="12" size-md="6" class="form-side">
+          <!-- Logo visible en móviles -->
+          <div class="mobile-logo">
+            <img src="assets/logo.jpg" alt="Logo" class="logo-mobile" />
+          </div>
+
+          <div class="login-card-container">
+            <!-- Imagen decorativa (visible en escritorio) -->
+            <div class="image-side">
+              <img src="assets/logo.jpg" alt="Login" class="login-image" />
+            </div>
+
+            <!-- Formulario -->
+            <div class="form-side">
               <div class="form-box">
-                <h1 class="title">Login</h1>
-                <p class="subtitle">Ingresa tus datos para iniciar sesión</p>
+                <h1 class="title">Iniciar sesión</h1>
+                <p class="subtitle">Ingresa tus datos para continuar</p>
 
                 <form (submit)="onSubmit($event)" class="form">
                   <ion-item lines="none" class="input-item">
@@ -28,8 +30,7 @@
                       name="username"
                       required
                       class="custom-input"
-                      autocomplete="username"
-                      placeholder="Email o número"
+                      placeholder="ejemplo@correo.com"
                     ></ion-input>
                   </ion-item>
 
@@ -41,8 +42,7 @@
                       name="password"
                       required
                       class="custom-input"
-                      autocomplete="current-password"
-                      placeholder="Contraseña"
+                      placeholder="••••••••"
                     ></ion-input>
                   </ion-item>
 
@@ -60,8 +60,9 @@
                   </ion-text>
                 </form>
               </div>
-            </ion-col>
-          </ion-row>
+            </div>
+          </div>
+
         </ion-card>
       </ion-col>
     </ion-row>

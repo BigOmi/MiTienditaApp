@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: false,
@@ -46,7 +47,7 @@ export class ProductosPage implements OnInit {
     }
   ];
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   get productosFiltrados() {
     return this.productos.filter(p => {
@@ -64,6 +65,10 @@ export class ProductosPage implements OnInit {
 
       return coincideBusqueda && coincideEstado && coincideCategoria;
     });
+  }
+
+  navNewProduct() {
+    this.router.navigateByUrl('/new-producto');
   }
 
   ngOnInit() {}

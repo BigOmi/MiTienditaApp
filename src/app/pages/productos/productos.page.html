@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true" class="productos-content">
   <ion-grid class="ion-padding">
-    <!-- Filtros y búsqueda -->
+    <!-- Filtros -->
     <ion-row class="ion-align-items-center filtros-row" no-wrap>
       <ion-col size="12" size-md="5">
         <ion-searchbar
@@ -35,7 +35,6 @@
           cancel-text="Cancelar"
           class="select-filtro"
         >
-          <ion-select-option value="Todos">Todos</ion-select-option>
           <ion-select-option *ngFor="let cat of categorias" [value]="cat">
             {{ cat }}
           </ion-select-option>
@@ -43,14 +42,14 @@
       </ion-col>
 
       <ion-col size="12" size-md="2" class="ion-text-end">
-        <ion-button expand="block" color="success" fill="solid" size="small">
+        <ion-button (click)="navNewProduct()" expand="block" color="success" fill="solid" size="small">
           <ion-icon slot="start" name="add-circle-outline"></ion-icon>
           Agregar
         </ion-button>
       </ion-col>
     </ion-row>
 
-    <!-- Lista compacta de productos -->
+    <!-- Lista de productos -->
     <ion-row class="ion-margin-top">
       <ion-col size="12" *ngFor="let producto of productosFiltrados">
         <ion-card class="producto-mini-card" [class.inactivo]="!producto.activo">
@@ -60,13 +59,16 @@
               <img [src]="producto.imagen" [alt]="producto.nombre" class="img-mini" />
             </ion-col>
 
-            <!-- Info principal -->
+            <!-- Info -->
             <ion-col size="6" class="info-mini-col">
               <h3 class="producto-nombre">{{ producto.nombre }}</h3>
               <p class="producto-precio">
-                <span class="venta">${{ producto.precioVenta }}</span> mx
+                <span class="venta">${{ producto.precioVenta }}</span>
               </p>
               <p class="producto-stock">Stock: {{ producto.stock }}</p>
+              <p class="producto-estado" [class.activo]="producto.activo" [class.inactivo]="!producto.activo">
+                {{ producto.activo ? 'Activo' : 'Inactivo' }}
+              </p>
             </ion-col>
 
             <!-- Acciones -->

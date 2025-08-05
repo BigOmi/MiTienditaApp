@@ -5,7 +5,7 @@
       <ion-menu-button menu="main-menu" class="menu-hamburger"></ion-menu-button>
     </ion-buttons>
     <ion-title class="ion-text-capitalize">{{ pageTitle }}</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" (click)="nVenta()">
       @if(showNuevaVenta) {
         <ion-button color="warning" class="nueva-venta-btn" size="small">
           <span class="nueva-venta-text">Nueva Venta</span>

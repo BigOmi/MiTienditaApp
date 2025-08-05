@@ -1,17 +1,17 @@
 :host {
-  display: flex;
-  flex-direction: column;
+  display: block;
   height: 100%;
 }
 
 ion-content {
-  background-color: #f6f8f7 !important;
-  --background: transparent !important;
-  /* Esto fuerza el color de fondo exacto y evita que ionic ponga degradados u otros */
+  --background: #f6f8f7;
+  padding-top: 0;
 }
 
+/* Filtros */
 .filtros-row {
   row-gap: 12px;
+  margin-top: 0;
 }
 
 .searchbar-custom {
@@ -30,13 +30,15 @@ ion-content {
   --padding-end: 8px;
 }
 
-/* Card pequeña */
+/* Tarjeta de producto */
 .producto-mini-card {
   border-radius: 12px;
-  padding: 8px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
   transition: transform 0.2s ease;
+  background: #ffffff;
+  border-left: 4px solid var(--ion-color-primary);
 }
 
 .producto-mini-card:hover {
@@ -44,10 +46,11 @@ ion-content {
 }
 
 .producto-mini-card.inactivo {
-  opacity: 0.5;
+  opacity: 0.6;
+  border-left-color: var(--ion-color-medium);
 }
 
-/* Columnas */
+/* Imagen */
 .img-mini-col {
   display: flex;
   justify-content: center;
@@ -61,6 +64,7 @@ ion-content {
   border-radius: 8px;
 }
 
+/* Información */
 .info-mini-col {
   padding-left: 0;
   display: flex;
@@ -69,14 +73,14 @@ ion-content {
 }
 
 .producto-nombre {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   margin: 0;
   color: var(--ion-color-dark);
 }
 
 .producto-precio {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   margin: 2px 0;
   color: var(--ion-color-dark);
 }
@@ -91,12 +95,27 @@ ion-content {
   color: var(--ion-color-medium);
 }
 
+.producto-estado {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.producto-estado.activo {
+  color: var(--ion-color-success);
+}
+
+.producto-estado.inactivo {
+  color: var(--ion-color-medium);
+}
+
+/* Acciones */
 .acciones-mini-col {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   padding-right: 4px;
 }
 
@@ -108,6 +127,6 @@ ion-content {
   }
 
   .producto-mini-card {
-    padding: 10px 12px;
+    padding: 10px;
   }
 }
