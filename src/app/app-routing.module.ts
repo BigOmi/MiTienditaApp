@@ -1,6 +1,10 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { HomePage } from './home/home.page';
+import { NewProductoComponent } from './new-producto/new-producto.component';
+import { NuevaVentaComponent } from './nueva-venta/nueva-venta.component';
+import { NewEmpleadoPage } from './new-empleado/new-empleado.page';
+import { ConfiguracionComponent } from './configuracion/configuracion.component';
 
 const routes: Routes = [
   {
@@ -41,8 +45,21 @@ const routes: Routes = [
         path: 'usuarios',
         loadChildren: () => import('./pages/trabajadores/trabajadores.module').then( m => m.TrabajadoresPageModule)
       },
+      { path: 'configuracion',
+    component: ConfiguracionComponent},
     ]
   },
+
+  {
+  path: 'new-empleado',
+  component: NewEmpleadoPage
+  },
+  { path: 'new-producto',
+    component: NewProductoComponent},
+
+    { path: 'new-venta',
+    component: NuevaVentaComponent},
+
 
 ];
 

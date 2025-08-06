@@ -22,7 +22,8 @@ export class TopbarComponent implements OnInit {
     { label: 'Dashboard', icon: 'grid', path: '/home/dashboard', showNuevaVenta: true },
     { label: 'Ventas', icon: 'bar-chart', path: '/home/ventas' },
     { label: 'Productos', icon: 'cube', path: '/home/productos' },
-    { label: 'Trabajadores', icon: 'people', path: '/home/usuarios' }
+    { label: 'Trabajadores', icon: 'people', path: '/home/usuarios' },
+    { label: 'Configución', icon: 'settings', path: '/home/configuracion' },
   ];
   selectedPath = '/home/dashboard';
   pageTitle = 'Dashboard';
