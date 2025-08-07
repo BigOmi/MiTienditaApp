@@ -46,4 +46,10 @@ export class TopbarComponent implements OnInit {
   navigateTo(path: string) {
     this.router.navigateByUrl(path);
   }
+
+  nVenta( ) {
+    this.router.navigateByUrl('/new-venta');
+  }
 }
+
+

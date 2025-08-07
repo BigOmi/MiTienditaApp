@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { catchError, firstValueFrom, of } from 'rxjs';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   standalone: false,
@@ -8,114 +12,120 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TrabajadoresPage implements OnInit {
 
-  constructor() { }
+  constructor(
+    private router: Router,
+    private userS: UsersService,
+    private fb: FormBuilder
+  ) {}
 
   busqueda: string = '';
   filtroRol: string = '';
+  usuarios: any[] = [];
+  loading: boolean = true;
+  error: string | null = null;
 
-  usuarios = [
-    {
-      id: 1,
-      nombre: 'Carlos',
-      apellido: 'López',
-      imagen: 'https://i.pravatar.cc/150?img=1',
-      edad: 30,
-      email: 'carlos@example.com',
-      rol: 'admin',
-      created_at: new Date('2022-01-01'),
-    },
-    {
-      id: 2,
-      nombre: 'María',
-      apellido: 'Gómez',
-      imagen: 'https://i.pravatar.cc/150?img=2',
-      edad: 25,
-      email: 'maria@example.com',
-      rol: 'empleado',
-      created_at: new Date('2022-02-01'),
-    },
-    {
-      id: 3,
-      nombre: 'Juan',
-      apellido: 'Pérez',
-      imagen: 'https://i.pravatar.cc/150?img=3',
-      edad: 40,
-      email: 'juan@example.com',
-      rol: 'admin',
-      created_at: new Date('2022-03-01'),
-    },
-    {
-      id: 4,
-      nombre: 'Ana',
-      apellido: 'García',
-      imagen: 'https://i.pravatar.cc/150?img=4',
-      edad: 28,
-      email: 'ana@example.com',
-      rol: 'empleado',
-      created_at: new Date('2022-04-01'),
-    },
-    {
-      id: 5,
-      nombre: 'Luis',
-      apellido: 'Martínez',
-      imagen: 'https://i.pravatar.cc/150?img=5',
-      edad: 35,
-      email: 'luis@example.com',
-      rol: 'admin',
-      created_at: new Date('2022-05-01'),
-    },
-    {
-      id: 6,
-      nombre: 'Sofía',
-      apellido: 'Rodríguez',
-      imagen: 'https://i.pravatar.cc/150?img=6',
-      edad: 22,
-      email: 'sofia@example.com',
-      rol: 'empleado',
-      created_at: new Date('2022-06-01'),
-    },
-    {
-      id: 7,
-      nombre: 'Alejandro',
-      apellido: 'Hernández',
-      imagen: 'https://i.pravatar.cc/150?img=7',
-      edad: 38,
-      email: 'alejandro@example.com',
-      rol: 'admin',
-      created_at: new Date('2022-07-01'),
-    },
-    {
-      id: 8,
-      nombre: 'Valeria',
-      apellido: 'González',
-      imagen: 'https://i.pravatar.cc/150?img=8',
-      edad: 29,
-      email: 'valeria@example.com',
-      rol: 'empleado',
-      created_at: new Date('2022-08-01'),
-    },
-  ];
+  usuarioEditandoId: number | null = null;
+  usuarioEditando: any = null;
+  mostrarPassword: boolean = false;
+  editForm!: FormGroup;
+
+  async ngOnInit() {
+    this.initForm();
+    await this.loadUsers();
+  }
+
+  initForm() {
+    this.editForm = this.fb.group({
+      nombre: ['', Validators.required],
+      apellido: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      edad: ['', Validators.required],
+      rol: ['', Validators.required],
+      imagen: [''],
+      contraseña: ['']
+    });
+  }
+
+  async loadUsers() {
+    this.loading = true;
+    this.error = null;
+
+    try {
+      const response = await firstValueFrom(this.userS.obtenerUsuarios());
+      this.usuarios = response as any[] || [];
+    } catch (err) {
+      console.error('Error al cargar usuarios:', err);
+      this.error = 'Error al cargar los usuarios';
+    } finally {
+      this.loading = false;
+    }
+  }
 
   usuariosFiltrados() {
-  return this.usuarios.filter(usuario => {
-    const coincideRol = this.filtroRol ? usuario.rol === this.filtroRol : true;
-    const terminoBusquedaLower = this.busqueda.toLowerCase();
-    const coincideBusqueda = (
-      usuario.nombre.toLowerCase().includes(terminoBusquedaLower) ||
-      usuario.apellido.toLowerCase().includes(terminoBusquedaLower) ||
-      usuario.email.toLowerCase().includes(terminoBusquedaLower)
-    );
-    return coincideRol && coincideBusqueda;
-  });
-}
-
-
-  agregarUsuario() {
-    // Aquí irá tu lógica para agregar un nuevo usuario
-    console.log('Agregar usuario');
+    return this.usuarios.filter(usuario => {
+      const coincideRol = this.filtroRol ? usuario.rol === this.filtroRol : true;
+      const terminoBusquedaLower = this.busqueda.toLowerCase();
+      const coincideBusqueda = (
+        usuario.nombre.toLowerCase().includes(terminoBusquedaLower) ||
+        usuario.apellido.toLowerCase().includes(terminoBusquedaLower) ||
+        usuario.email.toLowerCase().includes(terminoBusquedaLower)
+      );
+      return coincideRol && coincideBusqueda;
+    });
   }
 
-  ngOnInit() {
+  navNewUser() {
+    this.router.navigateByUrl('/new-empleado');
   }
 
+  editarUsuario(usuario: any) {
+    this.usuarioEditandoId = usuario.id;
+    this.usuarioEditando = usuario;
+    this.editForm.patchValue({
+      ...usuario,
+      contraseña: ''
+    });
+  }
+
+  cancelarEdicion() {
+    this.usuarioEditandoId = null;
+    this.usuarioEditando = null;
+    this.editForm.reset();
+    this.mostrarPassword = false;
+  }
+
+  togglePasswordVisibility() {
+    this.mostrarPassword = !this.mostrarPassword;
+  }
+
+  async guardarCambios() {
+    if (this.editForm.invalid || !this.usuarioEditando) return;
+
+    const valores = { ...this.editForm.value };
+    if (!valores.contraseña) {
+      delete valores.contraseña;
+    }
+
+    try {
+      await firstValueFrom(this.userS.editarUsuario(this.usuarioEditando.id, valores));
+      alert('Usuario actualizado correctamente');
+      this.cancelarEdicion();
+      await this.loadUsers();
+    } catch (err) {
+      console.error('Error al actualizar:', err);
+      alert('Error al actualizar el usuario');
+    }
+  }
+
+  async eliminarUsuario(id: number) {
+    if (!confirm('¿Deseas eliminar este usuario?')) return;
+
+    try {
+      await firstValueFrom(this.userS.eliminarUsuario(id));
+      this.usuarios = this.usuarios.filter(u => u.id !== id);
+    } catch (err) {
+      console.error('Error al eliminar:', err);
+      alert('Error al eliminar el usuario');
+    }
+  }
 }

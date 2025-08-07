@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { CategoriesService } from 'src/app/services/categories.service';
+import { ProductsService } from 'src/app/services/products.service';
 
 @Component({
   standalone: false,
@@ -9,50 +14,76 @@ import { Component, OnInit } from '@angular/core';
 export class ProductosPage implements OnInit {
 
   buscarproduct = '';
-  categorias: string[] = ['Todos', 'Ropa', 'Electrónica', 'Hogar', 'Juguetes', 'Accesorios'];
-  categoriaSeleccionada: string = 'Todos';
   estadoFiltro: string = 'todos';
+  categoriaSeleccionada: number | 'Todos' = 'Todos';
 
-  productos = [
-    {
-      nombre: 'Camisa Blanca',
-      descripcion: 'Camisa blanca de algodón con botones rojos y cuello detallado.',
-      imagen: 'https://storage.googleapis.com/a1aa/image/a61e2847-a2e5-418c-778a-bbda61b03757.jpg',
-      precioVenta: 450,
-      precioCompra: 300,
-      stock: 100,
-      categoria: 'Ropa',
-      activo: true
-    },
-    {
-      nombre: 'Camisa Azul',
-      descripcion: 'Camisa azul formal con diseño moderno.',
-      imagen: 'https://via.placeholder.com/100x100.png?text=Camisa+Azul',
-      precioVenta: 550,
-      precioCompra: 350,
-      stock: 25,
-      categoria: 'Ropa',
-      activo: false
-    },
-    {
-      nombre: 'Laptop HP',
-      descripcion: 'Laptop HP con 16GB RAM y SSD.',
-      imagen: 'https://via.placeholder.com/100x100.png?text=Laptop+HP',
-      precioVenta: 12000,
-      precioCompra: 9000,
-      stock: 15,
-      categoria: 'Tecnología',
-      activo: true
+
+  productos: any[] = [];
+  categorias: any[] = [];
+
+  editForm!: FormGroup;
+  productoEditandoId: number | null = null;
+
+  constructor(
+    private router: Router,
+    private productS: ProductsService,
+    private categoryS: CategoriesService,
+    private fb: FormBuilder
+  ) {}
+
+  async ngOnInit() {
+    this.initForm();
+    await this.cargarCategorias();
+    await this.cargarProductos();
+  }
+
+  initForm() {
+    this.editForm = this.fb.group({
+      nombre: ['', Validators.required],
+      descripcion: [''],
+      imagen: [''],
+      precioCompra: [0, [Validators.required, Validators.min(0)]],
+      precioVenta: [0, [Validators.required, Validators.min(0)]],
+      stock: [0, [Validators.required, Validators.min(0)]],
+      categoria: ['', Validators.required],
+      activo: [true]
+    });
+  }
+
+  async cargarCategorias() {
+    try {
+      const response: any = await firstValueFrom(this.categoryS.obtenerCategorias());
+      this.categorias = response;
+    } catch (error) {
+      console.error('Error cargando categorías:', error);
     }
-  ];
+  }
 
-  constructor() {}
+  async cargarProductos() {
+  try {
+    const response: any = await firstValueFrom(this.productS.obtenerProductos());
+    this.productos = (response || []).map((p: any) => ({
+      id: p.id,
+      nombre: p.nombre,
+      descripcion: p.descripcion,
+      imagen: p.imagen,
+      precioVenta: parseFloat(p.precio_venta),
+      precioCompra: parseFloat(p.precio_compra),
+      stock: p.stock_actual,
+      activo: p.activo,
+      categoria: p.categoria // ya es un objeto
+    }));
+  } catch (error) {
+    console.error('Error cargando productos:', error);
+  }
+}
+
 
   get productosFiltrados() {
     return this.productos.filter(p => {
       const coincideBusqueda =
-        p.nombre.toLowerCase().includes(this.buscarproduct.toLowerCase()) ||
-        p.descripcion.toLowerCase().includes(this.buscarproduct.toLowerCase());
+        p.nombre?.toLowerCase().includes(this.buscarproduct.toLowerCase()) ||
+        p.descripcion?.toLowerCase().includes(this.buscarproduct.toLowerCase());
 
       const coincideEstado =
         this.estadoFiltro === 'todos' ||
@@ -60,11 +91,84 @@ export class ProductosPage implements OnInit {
         (this.estadoFiltro === 'inactivos' && !p.activo);
 
       const coincideCategoria =
-        this.categoriaSeleccionada === 'Todos' || p.categoria === this.categoriaSeleccionada;
+        this.categoriaSeleccionada === 'Todos' ||
+        p.categoria?.id === this.categoriaSeleccionada;
 
       return coincideBusqueda && coincideEstado && coincideCategoria;
     });
   }
 
-  ngOnInit() {}
+  navNewProduct() {
+    this.router.navigateByUrl('/new-producto');
+  }
+
+  editarProducto(producto: any) {
+    this.productoEditandoId = producto.id;
+    this.editForm.patchValue({
+      nombre: producto.nombre,
+      descripcion: producto.descripcion,
+      imagen: producto.imagen,
+      precioCompra: parseFloat(producto.precio_compra),
+      precioVenta: parseFloat(producto.precio_venta),
+      stock: producto.stock_actual,
+      categoria: producto.categoria?.id,
+      activo: producto.activo
+    });
+
+    setTimeout(() => {
+      const elemento = document.getElementById(`producto-${producto.id}`);
+      if (elemento) {
+        elemento.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  }
+
+  cancelarEdicion() {
+    this.editForm.reset();
+    this.productoEditandoId = null;
+  }
+
+  async guardarCambios() {
+    if (this.editForm.invalid || this.productoEditandoId === null) return;
+
+    const formValues = this.editForm.value;
+
+    const payload = {
+      nombre: formValues.nombre,
+      descripcion: formValues.descripcion,
+      imagen: formValues.imagen,
+      precio_venta: formValues.precioVenta,
+      precio_compra: formValues.precioCompra,
+      stock_actual: formValues.stock,
+      activo: formValues.activo,
+      categoriaId: formValues.categoria // Aquí mandamos solo el ID
+    };
+
+    try {
+      await firstValueFrom(this.productS.editarProducto(this.productoEditandoId, payload));
+      alert('Producto actualizado');
+      this.cancelarEdicion();
+      await this.cargarProductos();
+    } catch (error) {
+      console.error('Error actualizando producto:', error);
+      alert('Error al actualizar el producto');
+    }
+  }
+
+  async eliminarProducto(id: number) {
+    if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+
+    try {
+      await firstValueFrom(this.productS.eliminarProducto(id));
+      this.productos = this.productos.filter(p => p.id !== id);
+    } catch (error) {
+      console.error('Error al eliminar producto:', error);
+      alert('Error al eliminar producto');
+    }
+  }
+
+  getNombreCategoria(id: number): string {
+    const cat = this.categorias.find(c => c.id === id);
+    return cat ? cat.nombre : 'Sin categoría';
+  }
 }
