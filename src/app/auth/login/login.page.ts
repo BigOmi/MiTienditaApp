@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   standalone: false,
@@ -7,36 +8,37 @@ import { Router } from '@angular/router';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit {
 
-  username: string = '';
+export class LoginPage implements OnInit {
+  email: string = '';
   password: string = '';
   errorMessage: string = '';
 
-  // Simulación simple de usuario
-  private validUser = {
-    username: 'user@admin.com',
-    password: '123'
-  };
 
-  constructor(private router: Router) {}
+
+
+  constructor(
+    private router: Router,
+    private usersService: UsersService
+  ) {}
 
   ngOnInit() {}
 
   onSubmit(event: Event) {
     event.preventDefault();
-
-    // Validación simple
-    if (
-      this.username.toLowerCase() === this.validUser.username.toLowerCase() &&
-      this.password === this.validUser.password
-    ) {
-      this.errorMessage = '';
-      // Navegar a home
-      this.router.navigate(['/home'], { replaceUrl: true });
-    } else {
-      this.errorMessage = 'Usuario o contraseña incorrectos';
-    }
+    this.errorMessage = '';
+    this.usersService.login(this.email, this.password).subscribe({
+      next: (response) => {
+        // Guarda token y usuario en localStorage
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        // Navega a home
+        this.router.navigate(['/home'], { replaceUrl: true });
+      },
+      error: (err) => {
+        this.errorMessage = 'Usuario o contraseña incorrectos';
+      }
+    });
   }
 
   changePage() {

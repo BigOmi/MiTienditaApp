@@ -23,11 +23,11 @@
 
                 <form (submit)="onSubmit($event)" class="form">
                   <ion-item lines="none" class="input-item">
-                    <ion-label position="stacked" class="custom-label">Email o número</ion-label>
+                    <ion-label position="stacked" class="custom-label">Correo electrónico</ion-label>
                     <ion-input
-                      type="text"
-                      [(ngModel)]="username"
-                      name="username"
+                      type="email"
+                      [(ngModel)]="email"
+                      name="email"
                       required
                       class="custom-input"
                       placeholder="ejemplo@correo.com"

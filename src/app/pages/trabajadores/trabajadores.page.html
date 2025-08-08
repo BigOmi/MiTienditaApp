@@ -48,7 +48,7 @@
 
             <ion-col size="6" class="info-mini-col">
               <h3 class="usuario-nombre">{{ usuario.nombre }} {{ usuario.apellido }}</h3>
-              <p class="usuario-email">{{ usuario.email }}</p>
+              <!-- Email eliminado de vista porque no está en DTO -->
               <p class="usuario-rol">{{ usuario.rol }} | {{ usuario.edad }} años</p>
               <p class="usuario-fecha">{{ usuario.created_at | date }}</p>
             </ion-col>
@@ -81,10 +81,6 @@
                 <ion-input formControlName="apellido"></ion-input>
               </ion-item>
 
-              <ion-item>
-                <ion-label position="floating">Email</ion-label>
-                <ion-input formControlName="email" type="email"></ion-input>
-              </ion-item>
 
               <ion-item>
                 <ion-label position="floating">Edad</ion-label>
@@ -108,7 +104,7 @@
                 <ion-label position="floating">Contraseña</ion-label>
                 <ion-input
                   [type]="mostrarPassword ? 'text' : 'password'"
-                  formControlName="contraseña"
+                  formControlName="password"
                 ></ion-input>
                 <ion-button fill="clear" slot="end" size="small" (click)="togglePasswordVisibility()" type="button">
                   <ion-icon [name]="mostrarPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>

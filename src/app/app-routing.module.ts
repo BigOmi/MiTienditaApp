@@ -5,6 +5,7 @@ import { NewProductoComponent } from './new-producto/new-producto.component';
 import { NuevaVentaComponent } from './nueva-venta/nueva-venta.component';
 import { NewEmpleadoPage } from './new-empleado/new-empleado.page';
 import { ConfiguracionComponent } from './configuracion/configuracion.component';
+import { authGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -23,6 +24,7 @@ const routes: Routes = [
   {
     path: 'home',
     component: HomePage,
+    canActivate: [authGuard],
     children: [
       {
       path: '',
@@ -46,18 +48,22 @@ const routes: Routes = [
         loadChildren: () => import('./pages/trabajadores/trabajadores.module').then( m => m.TrabajadoresPageModule)
       },
       { path: 'configuracion',
+        canActivate: [authGuard],
     component: ConfiguracionComponent},
     ]
   },
 
   {
   path: 'new-empleado',
+  canActivate: [authGuard],
   component: NewEmpleadoPage
   },
   { path: 'new-producto',
+    canActivate: [authGuard],
     component: NewProductoComponent},
 
     { path: 'new-venta',
+    canActivate: [authGuard],
     component: NuevaVentaComponent},
 
 

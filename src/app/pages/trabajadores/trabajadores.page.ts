@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, firstValueFrom, of } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { UsersService } from 'src/app/services/users.service';
 
 @Component({
@@ -11,12 +11,6 @@ import { UsersService } from 'src/app/services/users.service';
   styleUrls: ['./trabajadores.page.scss'],
 })
 export class TrabajadoresPage implements OnInit {
-
-  constructor(
-    private router: Router,
-    private userS: UsersService,
-    private fb: FormBuilder
-  ) {}
 
   busqueda: string = '';
   filtroRol: string = '';
@@ -29,6 +23,12 @@ export class TrabajadoresPage implements OnInit {
   mostrarPassword: boolean = false;
   editForm!: FormGroup;
 
+  constructor(
+    private router: Router,
+    private userS: UsersService,
+    private fb: FormBuilder
+  ) {}
+
   async ngOnInit() {
     this.initForm();
     await this.loadUsers();
@@ -36,13 +36,13 @@ export class TrabajadoresPage implements OnInit {
 
   initForm() {
     this.editForm = this.fb.group({
-      nombre: ['', Validators.required],
-      apellido: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      edad: ['', Validators.required],
-      rol: ['', Validators.required],
-      imagen: [''],
-      contraseña: ['']
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      apellido: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      // email eliminado porque no está en DTO ni será enviado
+      edad: ['', [Validators.min(0)]], // opcional, si está vacío no se envía
+      rol: ['', Validators.required], // Validar con enum 'admin' | 'empleado'
+      imagen: [''], // opcional, string
+      password: ['', [Validators.minLength(3), Validators.maxLength(30)]] // opcional
     });
   }
 
@@ -52,7 +52,7 @@ export class TrabajadoresPage implements OnInit {
 
     try {
       const response = await firstValueFrom(this.userS.obtenerUsuarios());
-      this.usuarios = response as any[] || [];
+      this.usuarios = response || [];
     } catch (err) {
       console.error('Error al cargar usuarios:', err);
       this.error = 'Error al cargar los usuarios';
@@ -67,8 +67,8 @@ export class TrabajadoresPage implements OnInit {
       const terminoBusquedaLower = this.busqueda.toLowerCase();
       const coincideBusqueda = (
         usuario.nombre.toLowerCase().includes(terminoBusquedaLower) ||
-        usuario.apellido.toLowerCase().includes(terminoBusquedaLower) ||
-        usuario.email.toLowerCase().includes(terminoBusquedaLower)
+        usuario.apellido.toLowerCase().includes(terminoBusquedaLower)
+        // email eliminado de búsqueda porque no está en DTO ni formulario
       );
       return coincideRol && coincideBusqueda;
     });
@@ -82,8 +82,12 @@ export class TrabajadoresPage implements OnInit {
     this.usuarioEditandoId = usuario.id;
     this.usuarioEditando = usuario;
     this.editForm.patchValue({
-      ...usuario,
-      contraseña: ''
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      edad: usuario.edad ?? '',
+      rol: usuario.rol,
+      imagen: usuario.imagen ?? '',
+      password: ''
     });
   }
 
@@ -99,21 +103,48 @@ export class TrabajadoresPage implements OnInit {
   }
 
   async guardarCambios() {
-    if (this.editForm.invalid || !this.usuarioEditando) return;
+    if (!this.editForm.valid) {
+      alert('Formulario inválido, revisa los datos');
+      return;
+    }
 
     const valores = { ...this.editForm.value };
-    if (!valores.contraseña) {
-      delete valores.contraseña;
+
+    // Edad a número solo si no vacío
+    if (valores.edad !== undefined && valores.edad !== null && valores.edad !== '') {
+      valores.edad = Number(valores.edad);
+      if (isNaN(valores.edad)) {
+        alert('La edad debe ser un número válido');
+        return;
+      }
+    } else {
+      delete valores.edad;
+    }
+
+    // No enviar password si está vacío
+    if (!valores.password) {
+      delete valores.password;
+    }
+
+    // Validar rol válido
+    if (valores.rol && valores.rol !== 'admin' && valores.rol !== 'empleado') {
+      alert('Rol inválido');
+      return;
+    }
+
+    if (!this.usuarioEditandoId) {
+      alert('No se ha seleccionado ningún usuario para editar.');
+      return;
     }
 
     try {
-      await firstValueFrom(this.userS.editarUsuario(this.usuarioEditando.id, valores));
+      await firstValueFrom(this.userS.editarUsuario(this.usuarioEditandoId, valores));
       alert('Usuario actualizado correctamente');
       this.cancelarEdicion();
       await this.loadUsers();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error al actualizar:', err);
-      alert('Error al actualizar el usuario');
+      alert('Error al actualizar el usuario: ' + (err.error?.message || err.message || 'Error desconocido'));
     }
   }
 
