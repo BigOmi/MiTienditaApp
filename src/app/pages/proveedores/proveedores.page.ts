@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ProveedoresService } from 'src/app/services/proveedores.service';
+import { CategoriesService } from 'src/app/services/categories.service';
 
 @Component({
   selector: 'app-proveedores',
@@ -14,6 +15,7 @@ export class ProveedoresPage implements OnInit {
 
   busqueda: string = '';
   proveedores: any[] = [];
+  categorias: any[] = [];
   loading: boolean = true;
   error: string | null = null;
 
@@ -23,12 +25,14 @@ export class ProveedoresPage implements OnInit {
   constructor(
     private router: Router,
     private provService: ProveedoresService,
+    private categoriesService: CategoriesService,
     private fb: FormBuilder
   ) {}
 
   ngOnInit() {
     this.initForm();
     this.loadProveedores();
+    this.loadCategorias();
   }
 
   initForm() {
@@ -36,7 +40,7 @@ export class ProveedoresPage implements OnInit {
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
       edad: [null, [Validators.required, Validators.min(18)]],
-      tipo_producto: ['', Validators.required],
+      tipo_producto: ['', Validators.required],  // Ahora será el nombre de la categoría
       telefono: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       direccion: ['', Validators.required]
@@ -55,6 +59,14 @@ export class ProveedoresPage implements OnInit {
       this.error = 'No se pudieron cargar los proveedores.';
     } finally {
       this.loading = false;
+    }
+  }
+
+  async loadCategorias() {
+    try {
+      this.categorias = await firstValueFrom(this.categoriesService.obtenerCategorias());
+    } catch (error) {
+      console.error('Error cargando categorías:', error);
     }
   }
 
@@ -78,7 +90,7 @@ export class ProveedoresPage implements OnInit {
       nombre: prov.nombre,
       apellido: prov.apellido,
       edad: prov.edad,
-      tipo_producto: prov.tipo_producto,
+      tipo_producto: prov.tipo_producto, // Aquí debe venir el string con el nombre de la categoría
       telefono: prov.telefono,
       email: prov.email,
       direccion: prov.direccion

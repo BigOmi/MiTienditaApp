@@ -70,9 +70,14 @@
                   </ion-item>
 
                   <ion-item>
-                    <ion-label position="floating">Tipo de Producto</ion-label>
-                    <ion-input formControlName="tipo_producto"></ion-input>
-                  </ion-item>
+  <ion-label>Tipo de Producto</ion-label>
+  <ion-select formControlName="tipo_producto" interface="popover" placeholder="Selecciona tipo">
+    <ion-select-option *ngFor="let cat of categorias" [value]="cat.nombre">
+      {{ cat.nombre }}
+    </ion-select-option>
+  </ion-select>
+</ion-item>
+
 
                   <ion-item>
                     <ion-label position="floating">Teléfono</ion-label>

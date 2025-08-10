@@ -22,10 +22,17 @@
       <ion-input type="number" formControlName="edad"></ion-input>
     </ion-item>
 
-    <ion-item>
-      <ion-label position="stacked">Tipo de Producto</ion-label>
-      <ion-input formControlName="tipo_producto"></ion-input>
-    </ion-item>
+<ion-item>
+  <ion-label position="stacked">Tipo de Producto</ion-label>
+  <ion-select formControlName="tipo_producto" placeholder="Selecciona categoría">
+    <ion-select-option *ngFor="let cat of categorias" [value]="cat.nombre">
+      {{ cat.nombre }}
+    </ion-select-option>
+  </ion-select>
+</ion-item>
+
+
+
 
     <ion-item>
       <ion-label position="stacked">Teléfono</ion-label>

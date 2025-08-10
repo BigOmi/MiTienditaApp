@@ -98,8 +98,8 @@ export class ProductosPage implements OnInit {
     });
   }
 
-  navNewProduct() {
-    this.router.navigateByUrl('/new-producto');
+  navNewCompra() {
+    this.router.navigateByUrl('/new-compra');
   }
 
   editarProducto(producto: any) {
