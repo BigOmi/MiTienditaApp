@@ -1,28 +1,29 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SalesService {
-  private apiUrl = 'http://localhost:3000/ventas';
+  private apiUrl = `${environment.apiUrl}/ventas`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  crearVenta(venta: any) {
-    return this.http.post(this.apiUrl, venta);
+  crearVenta(venta: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, venta);
   }
 
-  editarVenta(id: number, venta: any) {
-    return this.http.patch(`${this.apiUrl}/${id}`, venta);
+  editarVenta(id: number, venta: any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/${id}`, venta);
   }
 
-  obtenerVentas() {
-    return this.http.get(`${this.apiUrl}/all`);
+  obtenerVentas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/all`);
   }
 
-  eliminarVenta(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  eliminarVenta(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
-  
 }

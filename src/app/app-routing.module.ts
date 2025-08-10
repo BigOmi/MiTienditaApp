@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { HomePage } from './home/home.page';
-import { NewProductoComponent } from './new-producto/new-producto.component';
-import { NuevaVentaComponent } from './nueva-venta/nueva-venta.component';
-import { NewEmpleadoPage } from './new-empleado/new-empleado.page';
-import { ConfiguracionComponent } from './configuracion/configuracion.component';
 import { authGuard } from './guards/auth.guard';
+import { NewProveedorComponent } from './components/new-proveedor/new-proveedor.component';
+import { NuevaVentaComponent } from './components/nueva-venta/nueva-venta.component';
+import { NewEmpleadoPage } from './components/new-empleado/new-empleado.page';
+import { NewCategoriaComponent } from './components/new-categoria/new-categoria.component';
+import { NewCompraComponent } from './components/new-compra/new-compra.component';
 
 const routes: Routes = [
   {
@@ -47,24 +48,44 @@ const routes: Routes = [
         path: 'usuarios',
         loadChildren: () => import('./pages/trabajadores/trabajadores.module').then( m => m.TrabajadoresPageModule)
       },
-      { path: 'configuracion',
-        canActivate: [authGuard],
-    component: ConfiguracionComponent},
+        {
+    path: 'configuracion',
+    loadChildren: () => import('./pages/configuracion/configuracion.module').then( m => m.ConfiguracionPageModule)
+  },
+    {
+
+    path: 'proveedores',
+    canActivate: [authGuard],
+    loadChildren: () => import('./pages/proveedores/proveedores.module').then( m => m.ProveedoresPageModule)
+  },
+
     ]
   },
 
+  {
+    path: 'new-proveedor',
+    canActivate: [authGuard],
+    component: NewProveedorComponent
+  },
+  { path: 'new-compra',
+    canActivate: [authGuard],
+    component: NewCompraComponent},
   {
   path: 'new-empleado',
   canActivate: [authGuard],
   component: NewEmpleadoPage
   },
-  { path: 'new-producto',
-    canActivate: [authGuard],
-    component: NewProductoComponent},
-
     { path: 'new-venta',
     canActivate: [authGuard],
     component: NuevaVentaComponent},
+    { path: 'new-categoria',
+    canActivate: [authGuard],
+    component: NewCategoriaComponent},
+
+
+
+
+
 
 
 ];

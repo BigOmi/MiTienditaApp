@@ -1,0 +1,118 @@
+<ion-content [fullscreen]="true" class="proveedores-content">
+  <ion-grid class="ion-padding">
+
+    <!-- Filtros -->
+    <ion-row class="ion-align-items-center filtros-row" no-wrap>
+      <ion-col size="12" size-md="8">
+        <ion-searchbar
+          [(ngModel)]="busqueda"
+          debounce="300"
+          placeholder="Buscar proveedor..."
+          class="searchbar-custom"
+        ></ion-searchbar>
+      </ion-col>
+
+      <ion-col size="12" size-md="4" class="ion-text-end">
+        <ion-button expand="block" color="success" size="small" (click)="nuevoProveedor()">
+          <ion-icon slot="end" name="add-outline"></ion-icon>
+          Nuevo Proveedor
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <!-- Lista de proveedores + formulario edición debajo de cada uno -->
+    <ion-row class="ion-margin-top" style="gap:16px;">
+      @for (prov of proveedoresFiltrados(); track prov.id) {
+        <ion-col size="12" size-md="6">
+          <ion-card class="proveedor-card">
+            <ion-row class="ion-align-items-center">
+
+              <ion-col size="8" class="info-mini-col">
+                <h3 class="proveedor-nombre">{{ prov.nombre }} {{ prov.apellido }}</h3>
+                <p class="proveedor-contacto">{{ prov.telefono }} | {{ prov.email }}</p>
+                <p class="proveedor-fecha">{{ prov.created_at | date:'mediumDate' }}</p>
+                <p class="proveedor-detalles"><strong>Tipo Producto:</strong> {{ prov.tipo_producto }}</p>
+              </ion-col>
+
+              <ion-col size="4" class="acciones-mini-col">
+                <ion-button fill="clear" color="tertiary" size="small" (click)="editarProveedor(prov)">
+                  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" color="danger" size="small" (click)="eliminarProveedor(prov.id)">
+                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </ion-col>
+
+            </ion-row>
+          </ion-card>
+
+          <!-- Formulario edición debajo del proveedor seleccionado -->
+          @if (proveedorEditandoId === prov.id) {
+            <ion-card class="form-edicion-card">
+              <ion-card-header>
+                <ion-card-title>Editar Proveedor</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <form [formGroup]="editForm" (ngSubmit)="guardarCambios()">
+                  <ion-item>
+                    <ion-label position="floating">Nombre</ion-label>
+                    <ion-input formControlName="nombre"></ion-input>
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="floating">Apellido</ion-label>
+                    <ion-input formControlName="apellido"></ion-input>
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="floating">Edad</ion-label>
+                    <ion-input formControlName="edad" type="number"></ion-input>
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="floating">Tipo de Producto</ion-label>
+                    <ion-input formControlName="tipo_producto"></ion-input>
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="floating">Teléfono</ion-label>
+                    <ion-input formControlName="telefono"></ion-input>
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="floating">Email</ion-label>
+                    <ion-input formControlName="email" type="email"></ion-input>
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="floating">Dirección</ion-label>
+                    <ion-input formControlName="direccion"></ion-input>
+                  </ion-item>
+
+                  <ion-button expand="block" type="submit" [disabled]="editForm.invalid">Guardar Cambios</ion-button>
+                  <ion-button expand="block" color="medium" type="button" (click)="cancelarEdicion()">Cancelar</ion-button>
+                </form>
+              </ion-card-content>
+            </ion-card>
+          }
+        </ion-col>
+      }
+    </ion-row>
+
+    @if (loading) {
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-spinner name="crescent"></ion-spinner>
+        </ion-col>
+      </ion-row>
+    }
+
+    @if (!loading && proveedoresFiltrados().length === 0) {
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <p>No hay proveedores para mostrar.</p>
+        </ion-col>
+      </ion-row>
+    }
+  </ion-grid>
+</ion-content>

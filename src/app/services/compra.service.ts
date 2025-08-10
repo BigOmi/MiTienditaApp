@@ -1,28 +1,40 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompraService {
-  private apiUrl = 'http://localhost:3000/compras';
+  private apiUrl = `${environment.apiUrl}/compras`;
+  private detalleApiUrl = `${environment.apiUrl}/detalle-compras`;  // URL detalles compra
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  crearCompra(compra: any) {
-    return this.http.post(this.apiUrl, compra);
+  crearCompra(compra: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, compra);
   }
 
-  editarCompra(id: number, compra: any) {
-    return this.http.patch(`${this.apiUrl}/${id}`, compra);
+  editarCompra(id: number, compra: any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/${id}`, compra);
   }
 
-  obtenerCompras() {
-    return this.http.get(`${this.apiUrl}/all`);
+  obtenerCompras(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/all`);
   }
 
-  eliminarCompra(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  eliminarCompra(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
-  
+
+  // ==== Métodos para detalles de compra ====
+
+  obtenerDetallesCompra(): Observable<any[]> {
+    return this.http.get<any[]>(this.detalleApiUrl);
+  }
+
+  crearDetalleCompra(detalle: any): Observable<any> {
+    return this.http.post<any>(this.detalleApiUrl, detalle);
+  }
 }

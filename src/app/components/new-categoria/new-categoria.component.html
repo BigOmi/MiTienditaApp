@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Nueva Categoría</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <form [formGroup]="categoriaForm" (ngSubmit)="crearCategoria()">
+
+    <ion-item>
+      <ion-label position="stacked">Nombre *</ion-label>
+      <ion-input formControlName="nombre" placeholder="Ej: Bebidas"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="categoriaForm.get('nombre')?.invalid && categoriaForm.get('nombre')?.touched">
+      El nombre es obligatorio y debe tener al menos 3 caracteres.
+    </ion-note>
+
+    <ion-item>
+      <ion-label position="stacked">Descripción</ion-label>
+      <ion-textarea formControlName="descripcion" placeholder="Ej: Categoría para bebidas frías y calientes"></ion-textarea>
+    </ion-item>
+
+    <ion-button expand="block" color="success" type="submit" [disabled]="loading">
+      {{ loading ? 'Guardando...' : 'Crear Categoría' }}
+    </ion-button>
+
+  </form>
+
+</ion-content>

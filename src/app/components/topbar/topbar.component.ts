@@ -21,6 +21,7 @@ export class TopbarComponent implements OnInit {
   menuRoutes: MenuRoute[] = [
     { label: 'Dashboard', icon: 'grid', path: '/home/dashboard', showNuevaVenta: true },
     { label: 'Ventas', icon: 'bar-chart', path: '/home/ventas' },
+    { label: 'Proveedores', icon: 'briefcase', path: '/home/proveedores' },
     { label: 'Productos', icon: 'cube', path: '/home/productos' },
     { label: 'Trabajadores', icon: 'people', path: '/home/usuarios' },
     { label: 'Configución', icon: 'settings', path: '/home/configuracion' },

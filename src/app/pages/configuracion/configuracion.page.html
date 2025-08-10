@@ -1,0 +1,87 @@
+<ion-content class="ion-padding">
+
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title color="danger">Edit Your Profile</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <form [formGroup]="editForm" (ngSubmit)="guardarCambios()">
+
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <ion-item lines="full" color="light" class="rounded-item">
+              <ion-label position="floating" color="primary">Nombre</ion-label>
+              <ion-input formControlName="nombre" type="text"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="editForm.controls['nombre'].invalid && editForm.controls['nombre'].touched" class="error-text">
+              Nombre es obligatorio.
+            </ion-text>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <ion-item lines="full" color="light" class="rounded-item">
+              <ion-label position="floating" color="primary">Apellido</ion-label>
+              <ion-input formControlName="apellido" type="text"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="editForm.controls['apellido'].invalid && editForm.controls['apellido'].touched" class="error-text">
+              Apellido es obligatorio.
+            </ion-text>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <ion-item lines="full" color="light" class="rounded-item">
+              <ion-label position="floating" color="primary">Email</ion-label>
+              <ion-input formControlName="email" type="email"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="editForm.controls['email'].invalid && editForm.controls['email'].touched" class="error-text">
+              Ingresa un email válido.
+            </ion-text>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <ion-item lines="full" color="light" class="rounded-item">
+              <ion-label position="floating" color="primary">Dirección</ion-label>
+              <ion-input formControlName="direccion" type="text"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ion-item lines="full" color="light" class="ion-margin-top rounded-item">
+          <ion-label>Agregar foto</ion-label>
+          <input type="file" (change)="onFileSelected($event)" />
+        </ion-item>
+
+        <ion-text class="ion-margin-top ion-margin-bottom" color="primary" style="font-weight: 600;">Password Changes</ion-text>
+
+        <ion-item lines="full" color="light" class="rounded-item ion-margin-bottom">
+          <ion-input formControlName="currentPassword" type="password" placeholder="Current Password"></ion-input>
+        </ion-item>
+
+        <ion-item lines="full" color="light" class="rounded-item ion-margin-bottom">
+          <ion-input formControlName="newPassword" type="password" placeholder="New Password"></ion-input>
+        </ion-item>
+
+        <ion-item lines="full" color="light" class="rounded-item ion-margin-bottom">
+          <ion-input formControlName="confirmPassword" type="password" placeholder="Confirm New Password"></ion-input>
+        </ion-item>
+
+        <ion-footer class="ion-no-border">
+          <ion-toolbar>
+            <ion-buttons slot="end">
+              <ion-button color="medium" type="button" (click)="cancelar()">Cancel</ion-button>
+              <ion-button color="success" type="submit" [disabled]="editForm.invalid">Save Changes</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-footer>
+
+      </form>
+
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
