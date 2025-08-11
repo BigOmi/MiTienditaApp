@@ -1,55 +1,81 @@
-<!-- Fondo azul oscuro envolvente -->
-<div style="min-height: 100vh; background-color: #0D3B52; display: flex; justify-content: center; align-items: center; padding: 40px;">
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Registrar Nueva Venta</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-  <!-- Tarjeta blanca con contenido -->
-  <div class="container p-4 rounded-4 shadow-lg" style="max-width: 850px; background-color: #ffffff;">
-    <div class="card card-custom shadow">
-      <div class="d-flex justify-content-end mb-3">
-        <div class="input-group search-bar">
-          <input type="text" class="form-control" placeholder="¿Qué estás buscando?">
-          <button class="btn btn-outline-secondary" type="button">
-            <i class="bi bi-search"></i>
-          </button>
-        </div>
-      </div>
+<ion-content class="ion-padding">
 
-      <div class="table-responsive">
-        <table class="table table-borderless">
-          <thead>
-            <tr>
-              <th>Nombre Producto</th>
-              <th>Cantidad Productos</th>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Precio</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Calcetines</td>
-              <td>1 pz</td>
-              <td>14-07-2025</td>
-              <td>12:00:00</td>
-              <td>$50</td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td>14-07-2025</td>
-              <td>12:00:00</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>12:00:00</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
+  <!-- Barra de búsqueda general para agregar productos -->
+  <ion-searchbar
+    placeholder="Buscar producto para agregar..."
+    [(ngModel)]="textoBusqueda"
+    (ionInput)="filtrarProductosGlobal()"
+    debounce="300"
+    showClearButton="focus">
+  </ion-searchbar>
+
+  <!-- Lista de productos filtrados para agregar -->
+  <ion-list *ngIf="productosFiltradosGlobal.length > 0 && textoBusqueda.trim().length > 0">
+    <ion-item button detail lines="full" *ngFor="let producto of productosFiltradosGlobal" (click)="agregarProducto(producto)">
+      {{ producto.nombre }} (Stock: {{ producto.stock_actual }}) - ${{ producto.precio_venta }}
+    </ion-item>
+  </ion-list>
+
+  <form [formGroup]="ventaForm" (ngSubmit)="onSubmit()">
+
+    <!-- Método de pago -->
+    <ion-item>
+      <ion-label>Método de Pago</ion-label>
+      <ion-select formControlName="metodo_pago" interface="popover">
+        <ion-select-option value="EFECTIVO">Efectivo</ion-select-option>
+        <ion-select-option value="TARJETA">Tarjeta</ion-select-option>
+        <ion-select-option value="TRANSFERENCIA">Transferencia</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Lista de productos agregados (detalles) -->
+    <div formArrayName="detalles" class="detalles-venta" style="margin-top: 1rem;">
+      <div *ngFor="let detalle of detalles.controls; let i = index" [formGroupName]="i" class="detalle-row">
+
+        <ion-item lines="none">
+          <ion-label>{{ obtenerNombreProducto(detalle.get('productoId')?.value) }}</ion-label>
+
+          <ion-input
+            type="number"
+            min="1"
+            formControlName="cantidad"
+            (ionInput)="calcularDescuentoEnBack()"
+            style="width: 80px; text-align: center;">
+          </ion-input>
+
+          <ion-text slot="end" class="subtotal-text" style="margin-right: 10px;">
+            ${{ calcularSubtotal(detalle) | number:'1.2-2' }}
+          </ion-text>
+
+          <ion-button fill="clear" color="danger" (click)="removeDetalle(i)" aria-label="Eliminar producto" slot="end">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+
       </div>
     </div>
-  </div>
 
-</div>
+    <!-- Descuento total -->
+    <ion-item lines="none" *ngIf="descuentoCalculado > 0" class="descuento-item" style="margin-top: 1rem;">
+      <ion-label color="success"><strong>Descuento:</strong></ion-label>
+      <ion-text color="success" slot="end">- ${{ descuentoCalculado | number:'1.2-2' }}</ion-text>
+    </ion-item>
+
+    <!-- Total con descuento -->
+    <ion-item lines="none" class="total-item" style="margin-top: 0.5rem;">
+      <ion-label><strong>Total a pagar:</strong></ion-label>
+      <ion-text slot="end">${{ (calcularTotal() - descuentoCalculado) | number:'1.2-2' }}</ion-text>
+    </ion-item>
+
+    <ion-button expand="block" type="submit" [disabled]="ventaForm.invalid || detalles.length === 0" style="margin-top: 1.5rem;">
+      Registrar Venta
+    </ion-button>
+
+  </form>
+</ion-content>
