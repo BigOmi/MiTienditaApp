@@ -1,5 +1,6 @@
-// ventas.page.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ProductsService } from 'src/app/services/products.service';
+import { SalesService } from 'src/app/services/sales.service';
 
 @Component({
   standalone: false,
@@ -7,41 +8,97 @@ import { Component } from '@angular/core';
   templateUrl: './ventas.page.html',
   styleUrls: ['./ventas.page.scss'],
 })
-export class VentasPage {
-  modalAbierto = false;
+export class VentasPage implements OnInit {
   busqueda: string = '';
   fechaSeleccionada: string = '';
   showCalendar: boolean = false;
   filtroFecha: 'dia' | 'semana' | 'mes' | 'ninguno' = 'ninguno';
   semanaSeleccionada: { inicio: string; fin: string } | null = null;
 
+  ventas: any[] = [];
+  ventasFiltradas: any[] = [];
+  productos: any[] = [];
+
+  // Modal
+  modalAbierto = false;
   detalleVenta: any = {
-    id: '123456789',
-    ventaId: 1,
+    id: '',
     productos: [],
     cantidad: 0,
     precio: 0,
-    fecha: '2025-07-16',
-    hora: '10:00',
-    status: 'Completado',
+    fecha: '',
+    hora: '',
+    status: '',
+    usuario: '',
+    metodoPago: '',
   };
 
-  ventas = [
-    { id: 1, cantidad: 8, total: 345, fecha: '2025-07-10', hora: '13:00:00', status: 'Completado', usuario: 'Pedro', metodoPago: 'Mastercard' },
-    { id: 2, cantidad: 14, total: 740, fecha: '2025-07-15', hora: '14:00:00', status: 'Completado', usuario: 'Carlos', metodoPago: 'Visa' },
-    { id: 3, cantidad: 5, total: 125, fecha: '2025-07-20', hora: '15:00:00', status: 'Completado', usuario: 'Juan', metodoPago: 'Mastercard' },
-    { id: 4, cantidad: 8, total: 345, fecha: '2025-07-10', hora: '13:00:00', status: 'Completado', usuario: 'Pedro', metodoPago: 'Mastercard' },
-    { id: 5, cantidad: 14, total: 740, fecha: '2025-07-15', hora: '14:00:00', status: 'Completado', usuario: 'Carlos', metodoPago: 'Visa' },
-    { id: 6, cantidad: 5, total: 125, fecha: '2025-07-20', hora: '15:00:00', status: 'Completado', usuario: 'Juan', metodoPago: 'Mastercard' },
-  ];
+  constructor(
+    private salesService: SalesService,
+    private productsService: ProductsService
+  ) {}
 
-  ventasFiltradas = [...this.ventas];
+  ngOnInit() {
+    // Primero cargo los productos, luego las ventas
+    this.productsService.obtenerProductos().subscribe({
+      next: (prods) => {
+        this.productos = prods;
+        this.cargarVentas();
+      },
+      error: (err) => {
+        console.error('Error al cargar productos', err);
+        this.cargarVentas();
+      },
+    });
+  }
+
+  cargarVentas() {
+    this.salesService.obtenerVentas().subscribe({
+      next: (data) => {
+        this.ventas = data.map((venta: any) => {
+          const fechaHora = venta.createdAt || venta.fecha;
+          const fechaObj = fechaHora ? new Date(fechaHora) : null;
+
+          // Arreglo con detalles + info producto
+          const detallesConProductos = (venta.detalles || []).map((d: any) => {
+            const productoReal = this.productos.find(
+  (p) => String(p.id) === String(d.producto_id)
+);
+            return {
+              id: d.id,
+              nombre: productoReal ? productoReal.nombre : 'Producto desconocido',
+              cantidad: d.cantidad,
+              precio: Number(d.precio_unitario) || 0,
+            };
+          });
+
+          return {
+            id: venta.id,
+            productosStr: detallesConProductos
+              .map((d: any) => `${d.nombre} (${d.cantidad})`)
+              .join(', '),
+            cantidad: detallesConProductos.reduce(
+              (acc: number, item: any) => acc + (item.cantidad || 0),
+              0
+            ),
+            total: Number(venta.total) || 0,
+            fecha: fechaObj ? fechaObj.toISOString().split('T')[0] : '',
+            hora: fechaObj ? fechaObj.toTimeString().substring(0, 5) : '',
+            status: venta.estado,
+            usuario: venta.usuario?.nombre || 'Desconocido',
+            metodoPago: venta.metodo_pago,
+            detalles: detallesConProductos, // <-- Aquí guardas el arreglo completo para modal
+          };
+        });
+        this.ventasFiltradas = [...this.ventas];
+      },
+      error: (err) => console.error('Error al cargar ventas', err),
+    });
+  }
 
   get totalVendido(): number {
     return this.ventasFiltradas.reduce((acc, venta) => acc + venta.total, 0);
   }
-
-  // Tu lógica de filtrado y búsqueda NO se modifica (como pediste)
 
   filtrarVentas() {
     const query = this.busqueda.toLowerCase();
@@ -49,9 +106,10 @@ export class VentasPage {
     const fechaSeleccionada = new Date(this.fechaSeleccionada);
 
     this.ventasFiltradas = this.ventas.filter((venta) => {
-      const matchBusqueda = !query ||
+      const matchBusqueda =
+        !query ||
         Object.values(venta).some((val) =>
-          val.toString().toLowerCase().includes(query)
+          val?.toString().toLowerCase().includes(query)
         );
 
       if (!this.fechaSeleccionada || filtroFecha === 'ninguno') {
@@ -85,7 +143,6 @@ export class VentasPage {
     }
   }
 
-  // CONTROL DEL CALENDARIO (cierre automático al hacer click fuera)
   toggleCalendar() {
     this.showCalendar = !this.showCalendar;
   }
@@ -95,7 +152,6 @@ export class VentasPage {
     this.filtrarVentas();
   }
 
-  // Método para cerrar el calendario si se toca fuera (lo llamamos desde el (click) del ion-content)
   onContentClick() {
     if (this.showCalendar) {
       this.showCalendar = false;
@@ -105,7 +161,6 @@ export class VentasPage {
   enMismaSemana(fecha1: Date, fecha2: Date): boolean {
     const inicio1 = this.obtenerInicioSemana(fecha1);
     const inicio2 = this.obtenerInicioSemana(fecha2);
-
     return inicio1.toDateString() === inicio2.toDateString();
   }
 
@@ -117,42 +172,17 @@ export class VentasPage {
   }
 
   verDetalles(venta: any) {
-    const productosPorVenta: { [key: number]: any[] } = {
-      1: [
-        { nombre: 'Shampoo Anticaída', cantidad: 2, precio: 85 },
-        { nombre: 'Masaje Relajante', cantidad: 1, precio: 250 },
-        { nombre: 'Tratamiento Facial', cantidad: 1, precio: 300 }
-      ],
-      2: [
-        { nombre: 'Camisa Casual', cantidad: 2, precio: 180 },
-        { nombre: 'Pantalón de Mezclilla', cantidad: 1, precio: 400 },
-        { nombre: 'Zapatos de vestir', cantidad: 1, precio: 650 }
-      ],
-      3: [
-        { nombre: 'Manzanas', cantidad: 4, precio: 10 },
-        { nombre: 'Plátanos', cantidad: 6, precio: 8 },
-        { nombre: 'Sandía', cantidad: 1, precio: 50 }
-      ],
-      4: [
-        { nombre: 'Jabón Artesanal', cantidad: 3, precio: 25 },
-        { nombre: 'Aceite Esencial', cantidad: 1, precio: 120 },
-        { nombre: 'Toalla de spa', cantidad: 2, precio: 90 }
-      ],
-      5: [
-        { nombre: 'Zapatillas deportivas', cantidad: 2, precio: 500 },
-        { nombre: 'Gorra deportiva', cantidad: 1, precio: 120 }
-      ],
-      6: [
-        { nombre: 'Uvas', cantidad: 2, precio: 30 },
-        { nombre: 'Kiwi', cantidad: 4, precio: 15 }
-      ]
-    };
-
     this.detalleVenta = {
-      ...venta,
-      productos: productosPorVenta[venta.id] || []
+      id: venta.id,
+      productos: venta.detalles || [], // Usamos el arreglo completo para el modal
+      cantidad: venta.cantidad,
+      precio: venta.total,
+      fecha: venta.fecha,
+      hora: venta.hora,
+      status: venta.status,
+      usuario: venta.usuario,
+      metodoPago: venta.metodoPago,
     };
-
     this.modalAbierto = true;
   }
 
@@ -161,6 +191,16 @@ export class VentasPage {
   }
 
   calcularTotal(productos: any[]): number {
-    return productos.reduce((sum, p) => sum + (p.cantidad * p.precio), 0);
+    if (!productos || productos.length === 0) return 0;
+    return productos.reduce(
+      (sum, p) => sum + p.cantidad * p.precio,
+      0
+    );
+  }
+
+  // Método para formatear precios y evitar errores en el template
+  formatPrecio(valor: any): string {
+    const num = Number(valor);
+    return isNaN(num) ? '0.00' : num.toFixed(2);
   }
 }

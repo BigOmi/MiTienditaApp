@@ -17,7 +17,6 @@ export class ProductosPage implements OnInit {
   estadoFiltro: string = 'todos';
   categoriaSeleccionada: number | 'Todos' = 'Todos';
 
-
   productos: any[] = [];
   categorias: any[] = [];
 
@@ -60,24 +59,23 @@ export class ProductosPage implements OnInit {
   }
 
   async cargarProductos() {
-  try {
-    const response: any = await firstValueFrom(this.productS.obtenerProductos());
-    this.productos = (response || []).map((p: any) => ({
-      id: p.id,
-      nombre: p.nombre,
-      descripcion: p.descripcion,
-      imagen: p.imagen,
-      precioVenta: parseFloat(p.precio_venta),
-      precioCompra: parseFloat(p.precio_compra),
-      stock: p.stock_actual,
-      activo: p.activo,
-      categoria: p.categoria // ya es un objeto
-    }));
-  } catch (error) {
-    console.error('Error cargando productos:', error);
+    try {
+      const response: any = await firstValueFrom(this.productS.obtenerProductos());
+      this.productos = (response || []).map((p: any) => ({
+        id: p.id,
+        nombre: p.nombre,
+        descripcion: p.descripcion,
+        imagen: p.imagen,
+        precioVenta: parseFloat(p.precio_venta),
+        precioCompra: parseFloat(p.precio_compra),
+        stock: p.stock_actual,
+        activo: p.activo,
+        categoria: p.categoria
+      }));
+    } catch (error) {
+      console.error('Error cargando productos:', error);
+    }
   }
-}
-
 
   get productosFiltrados() {
     return this.productos.filter(p => {
@@ -108,9 +106,9 @@ export class ProductosPage implements OnInit {
       nombre: producto.nombre,
       descripcion: producto.descripcion,
       imagen: producto.imagen,
-      precioCompra: parseFloat(producto.precio_compra),
-      precioVenta: parseFloat(producto.precio_venta),
-      stock: producto.stock_actual,
+      precioCompra: producto.precioCompra,
+      precioVenta: producto.precioVenta,
+      stock: producto.stock,
       categoria: producto.categoria?.id,
       activo: producto.activo
     });
@@ -132,16 +130,17 @@ export class ProductosPage implements OnInit {
     if (this.editForm.invalid || this.productoEditandoId === null) return;
 
     const formValues = this.editForm.value;
+    const productoOriginal = this.productos.find(p => p.id === this.productoEditandoId);
 
     const payload = {
       nombre: formValues.nombre,
       descripcion: formValues.descripcion,
       imagen: formValues.imagen,
       precio_venta: formValues.precioVenta,
-      precio_compra: formValues.precioCompra,
-      stock_actual: formValues.stock,
+      precio_compra: productoOriginal?.precioCompra ?? 0,
+      stock_actual: productoOriginal?.stock ?? 0,
       activo: formValues.activo,
-      categoriaId: formValues.categoria // Aquí mandamos solo el ID
+      categoriaId: formValues.categoria
     };
 
     try {

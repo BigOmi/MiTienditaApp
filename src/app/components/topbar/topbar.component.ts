@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd, RouterModule } from '@angular/router'; // <-- Importa RouterModule
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+
+import { UsersService } from 'src/app/services/users.service';
 
 interface MenuRoute {
   label: string;
@@ -15,7 +17,7 @@ interface MenuRoute {
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterModule], // <-- Agrega RouterModule aquí
+  imports: [IonicModule, CommonModule, RouterModule],
 })
 export class TopbarComponent implements OnInit {
   menuRoutes: MenuRoute[] = [
@@ -30,9 +32,17 @@ export class TopbarComponent implements OnInit {
   pageTitle = 'Dashboard';
   showNuevaVenta = true;
 
-  constructor(private router: Router) {}
+  avatarUrl = 'assets/user.jpeg'; // Imagen por defecto
+
+  constructor(private router: Router, private usersService: UsersService) {}
 
   ngOnInit() {
+    // Obtener usuario y asignar la imagen para el avatar
+    const currentUser = this.usersService.getCurrentUser();
+    if (currentUser && currentUser.imagen) {
+      this.avatarUrl = currentUser.imagen;
+    }
+
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects || event.url;
@@ -48,9 +58,7 @@ export class TopbarComponent implements OnInit {
     this.router.navigateByUrl(path);
   }
 
-  nVenta( ) {
+  nVenta() {
     this.router.navigateByUrl('/new-venta');
   }
 }
-
-

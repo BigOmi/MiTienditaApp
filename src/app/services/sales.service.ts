@@ -15,6 +15,12 @@ export class SalesService {
     return this.http.post<any>(this.apiUrl, venta);
   }
 
+    // En tu sales.service.ts agrega este método:
+calcularDescuento(total: number) {
+  return this.http.post<{ descuento: number }>(`${this.apiUrl}/calcular-descuento`, { total });
+}
+
+
   editarVenta(id: number, venta: any): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/${id}`, venta);
   }
@@ -22,6 +28,11 @@ export class SalesService {
   obtenerVentas(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/all`);
   }
+
+  obtenerVentaPorId(id: number): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/${id}`);
+}
+
 
   eliminarVenta(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);

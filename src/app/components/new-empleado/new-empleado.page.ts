@@ -2,29 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { UsuarioService } from 'src/app/services/usuario.service';
+import { UsersService } from 'src/app/services/users.service';
 import { Router } from '@angular/router';
-
 
 @Component({
   selector: 'app-new-empleado',
   templateUrl: './new-empleado.page.html',
   styleUrls: ['./new-empleado.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    IonicModule
-  ]
+  imports: [CommonModule, ReactiveFormsModule, IonicModule],
 })
-export class NewEmpleadoPage {
-
+export class NewEmpleadoPage implements OnInit {
   usuarioForm!: FormGroup;
 
   constructor(
-    private Router:Router,
+    private router: Router,
     private fb: FormBuilder,
-    private usuarioService: UsuarioService
+    private usersService: UsersService
   ) {}
 
   ngOnInit() {
@@ -35,24 +29,22 @@ export class NewEmpleadoPage {
       edad: [null, [Validators.required, Validators.min(0)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
-      rol: ['', Validators.required]
+      rol: ['', Validators.required],
     });
   }
 
   onSubmit() {
     if (this.usuarioForm.valid) {
-      const nuevoUsuario = this.usuarioForm.value;
-      this.usuarioService.create(nuevoUsuario).subscribe({
+      this.usersService.crearUsuario(this.usuarioForm.value).subscribe({
         next: (res) => {
           console.log('Usuario creado exitosamente:', res);
-          // Puedes redirigir o mostrar una alerta aquí
+          this.router.navigate(['/home/usuarios']);
         },
         error: (err) => {
           console.error('Error al crear usuario:', err);
-        }
+        },
       });
     } else {
-      console.log('Formulario inválido');
       this.usuarioForm.markAllAsTouched();
     }
   }

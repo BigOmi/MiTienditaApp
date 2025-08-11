@@ -68,7 +68,6 @@ export class TrabajadoresPage implements OnInit {
       const coincideBusqueda = (
         usuario.nombre.toLowerCase().includes(terminoBusquedaLower) ||
         usuario.apellido.toLowerCase().includes(terminoBusquedaLower)
-        // email eliminado de búsqueda porque no está en DTO ni formulario
       );
       return coincideRol && coincideBusqueda;
     });
@@ -148,15 +147,24 @@ export class TrabajadoresPage implements OnInit {
     }
   }
 
-  async eliminarUsuario(id: number) {
+  async eliminarUsuario(id: any) {
+    // Convertir id a número y validar
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+      alert('ID inválido');
+      return;
+    }
+
     if (!confirm('¿Deseas eliminar este usuario?')) return;
 
     try {
-      await firstValueFrom(this.userS.eliminarUsuario(id));
-      this.usuarios = this.usuarios.filter(u => u.id !== id);
-    } catch (err) {
+      await firstValueFrom(this.userS.eliminarUsuario(idNum));
+      // Actualizar la lista local eliminando el usuario borrado
+      this.usuarios = this.usuarios.filter(u => u.id !== idNum);
+      alert('Usuario eliminado correctamente');
+    } catch (err: any) {
       console.error('Error al eliminar:', err);
-      alert('Error al eliminar el usuario');
+      alert('Error al eliminar el usuario: ' + (err.error?.message || err.message || 'Error desconocido'));
     }
   }
 }

@@ -11,6 +11,7 @@ import {
 import { IonicModule, AlertController } from '@ionic/angular';
 import { ProductsService } from 'src/app/services/products.service';
 import { SalesService } from 'src/app/services/sales.service';
+import { UsersService } from 'src/app/services/users.service'; // <<--- 1. Importa UsersService
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { FormsModule } from '@angular/forms';
@@ -23,14 +24,14 @@ interface Producto {
 }
 
 const MetodoPago = {
-  EFECTIVO: 'EFECTIVO',
-  TARJETA: 'TARJETA',
-  TRANSFERENCIA: 'TRANSFERENCIA',
+  EFECTIVO: 'efectivo',
+  TARJETA: 'tarjeta',
+  TRANSFERENCIA: 'transferencia'
 };
 
 const EstadoVenta = {
-  COMPLETADA: 'COMPLETADA',
-  PENDIENTE: 'PENDIENTE',
+  COMPLETADA: 'completada',
+  CANCELADA: 'cancelada',
 };
 
 @Component({
@@ -62,7 +63,8 @@ export class NuevaVentaComponent implements OnInit {
     private alertCtrl: AlertController,
     private productsService: ProductsService,
     private salesService: SalesService,
-    private http: HttpClient
+    private http: HttpClient,
+    private usersService: UsersService // <<--- 2. Inyecta UsersService
   ) {}
 
   ngOnInit() {
@@ -154,6 +156,15 @@ export class NuevaVentaComponent implements OnInit {
     }
   }
 
+  private async showError(message: string) {
+    const alert = await this.alertCtrl.create({
+      header: 'Error',
+      message,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
   async onSubmit() {
     if (this.ventaForm.invalid || this.detalles.length === 0) {
       this.ventaForm.markAllAsTouched();
@@ -161,7 +172,7 @@ export class NuevaVentaComponent implements OnInit {
       return;
     }
 
-    // Validar stock
+    // Validar stock (código existente)
     for (const detalleControl of this.detalles.controls) {
       const detalle = detalleControl as FormGroup;
       const productoId = detalle.get('productoId')?.value;
@@ -178,8 +189,16 @@ export class NuevaVentaComponent implements OnInit {
       }
     }
 
+    // <<--- 3. Obtén el ID del usuario logueado
+    const currentUser = this.usersService.getCurrentUser();
+    if (!currentUser || !currentUser.id) {
+        await this.showError('No se pudo obtener el usuario actual. Por favor, inicie sesión de nuevo.');
+        return;
+    }
+    const usuarioId = currentUser.id;
+
     const ventaPayload = {
-      usuarioId: 1, // Cambiar por el usuario logueado real
+      usuarioId: usuarioId, // <<--- 4. Usa el ID real del usuario
       metodo_pago: this.ventaForm.get('metodo_pago')?.value,
       descuento: this.descuentoCalculado,
       estado: EstadoVenta.COMPLETADA,
@@ -212,17 +231,9 @@ export class NuevaVentaComponent implements OnInit {
       },
       error: async (err) => {
         console.error('Error registrando venta', err);
-        await this.showError('Error al registrar la venta.');
+        const errorMessage = err.error?.message || 'Error desconocido al registrar la venta.';
+        await this.showError(errorMessage);
       }
     });
-  }
-
-  private async showError(message: string) {
-    const alert = await this.alertCtrl.create({
-      header: 'Error',
-      message,
-      buttons: ['OK']
-    });
-    await alert.present();
   }
 }

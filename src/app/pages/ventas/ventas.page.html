@@ -23,7 +23,7 @@
           <ion-select-option value="mes">Por Mes</ion-select-option>
         </ion-select>
 
-        <!-- Ícono + calendario alineado -->
+        <!-- Ícono + calendario -->
         <div class="icono-calendario" (click)="$event.stopPropagation()">
           <ion-icon
             name="calendar-outline"
@@ -54,7 +54,7 @@
         <thead>
           <tr>
             <th>ID Venta</th>
-            <th>Productos</th>
+            <th>Cant. Productos</th>
             <th>Usuario</th>
             <th>Pago</th>
             <th>Total</th>
@@ -70,7 +70,7 @@
             <td>{{ venta.cantidad }}</td>
             <td>{{ venta.usuario }}</td>
             <td>{{ venta.metodoPago }}</td>
-            <td>${{ venta.total }}</td>
+            <td>${{ venta.total.toFixed(2) }}</td>
             <td>{{ venta.fecha }}</td>
             <td>{{ venta.hora }}</td>
             <td>{{ venta.status }}</td>
@@ -87,7 +87,49 @@
     <!-- Total vendido -->
     <div class="total-vendido">
       <p>Total vendido</p>
-      <strong>${{ totalVendido }}</strong>
+      <strong>${{ totalVendido.toFixed(2) }}</strong>
+    </div>
+
+    <!-- Modal detalles -->
+    <div class="modal" *ngIf="modalAbierto" (click)="cerrarModal()">
+      <div
+        class="modal-content"
+        (click)="$event.stopPropagation()"
+        role="dialog"
+        aria-modal="true"
+      >
+        <h3>Detalles de venta #{{ detalleVenta.id }}</h3>
+        <p><strong>Usuario:</strong> {{ detalleVenta.usuario }}</p>
+        <p><strong>Fecha:</strong> {{ detalleVenta.fecha }} {{ detalleVenta.hora }}</p>
+        <p><strong>Status:</strong> {{ detalleVenta.status }}</p>
+        <p><strong>Método de pago:</strong> {{ detalleVenta.metodoPago }}</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of detalleVenta.productos">
+              <td>{{ p.nombre }}</td>
+              <td>{{ p.cantidad }}</td>
+              <td>${{ formatPrecio(p.precio) }}</td>
+              <td>${{ formatPrecio(p.cantidad * p.precio) }}</td>
+            </tr>
+
+            <tr>
+              <td colspan="3"><strong>Total</strong></td>
+              <td><strong>${{ calcularTotal(detalleVenta.productos) | number:'1.2-2' }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button (click)="cerrarModal()" class="btn-cerrar">Cerrar</button>
+      </div>
     </div>
   </div>
 </ion-content>

@@ -51,7 +51,7 @@
       </ion-col>
     </ion-row>
 
-    <!-- Lista de productos con formulario de edición individual -->
+    <!-- Lista de productos -->
     <ion-row class="ion-margin-top">
       <ion-col size="12" *ngFor="let producto of productosFiltrados">
         <ion-card class="producto-mini-card" [class.inactivo]="!producto.activo" [id]="'producto-' + producto.id">
@@ -62,7 +62,9 @@
 
             <ion-col size="6" class="info-mini-col">
               <h3 class="producto-nombre">{{ producto.nombre }}</h3>
-              <p class="producto-precio"> <span class="venta">${{ producto.precioVenta }}</span> </p>
+              <p class="producto-precio">
+                <span class="venta">${{ producto.precioVenta }}</span>
+              </p>
               <p class="producto-stock">Stock: {{ producto.stock }}</p>
               <p class="producto-estado" [class.activo]="producto.activo" [class.inactivo]="!producto.activo">
                 {{ producto.activo ? 'Activo' : 'Inactivo' }}
@@ -79,7 +81,7 @@
             </ion-col>
           </ion-row>
 
-          <!-- Formulario de edición debajo del producto -->
+          <!-- Formulario de edición -->
           <ion-row *ngIf="productoEditandoId === producto.id">
             <ion-col size="12">
               <ion-card>
@@ -106,7 +108,7 @@
 
                     <ion-item>
                       <ion-label position="floating">Precio Compra</ion-label>
-                      <ion-input type="number" formControlName="precioCompra"></ion-input>
+                      <ion-input type="number" formControlName="precioCompra" readonly></ion-input>
                     </ion-item>
 
                     <ion-item>
@@ -116,7 +118,7 @@
 
                     <ion-item>
                       <ion-label position="floating">Stock</ion-label>
-                      <ion-input type="number" formControlName="stock"></ion-input>
+                      <ion-input type="number" formControlName="stock" readonly></ion-input>
                     </ion-item>
 
                     <ion-item>

@@ -1,9 +1,10 @@
 <ion-content class="dashboard-content">
+
   <ion-grid class="dashboard-grid">
 
     <!-- Tarjetas resumen -->
     <ion-row>
-      <ion-col size="12" size-md="4" *ngFor="let card of summaryCards">
+      <ion-col size="12" size-md="6" *ngFor="let card of summaryCards">
         <ion-card class="summary-card" [ngClass]="card.bgClass">
           <ion-card-header>
             <ion-card-title class="summary-title" [ngClass]="card.textClass">{{ card.title }}</ion-card-title>
@@ -51,4 +52,5 @@
     </ion-row>
 
   </ion-grid>
+
 </ion-content>
