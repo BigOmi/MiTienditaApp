@@ -7,6 +7,7 @@ import { NuevaVentaComponent } from './components/nueva-venta/nueva-venta.compon
 import { NewEmpleadoPage } from './components/new-empleado/new-empleado.page';
 import { NewCategoriaComponent } from './components/new-categoria/new-categoria.component';
 import { NewCompraComponent } from './components/new-compra/new-compra.component';
+import { VentasPage } from './pages/ventas/ventas.page';
 
 const routes: Routes = [
   {
@@ -38,7 +39,7 @@ const routes: Routes = [
       },
       {
         path: 'ventas',
-        loadChildren: () => import('./pages/ventas/ventas.module').then( m => m.VentasPageModule)
+        component: VentasPage
       },
       {
         path: 'productos',

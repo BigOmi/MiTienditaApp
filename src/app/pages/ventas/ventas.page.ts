@@ -1,10 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 import { ProductsService } from 'src/app/services/products.service';
 import { SalesService } from 'src/app/services/sales.service';
 
 @Component({
-  standalone: false,
+  standalone: true,
   selector: 'app-ventas',
+  imports: [CommonModule, IonicModule, FormsModule],
   templateUrl: './ventas.page.html',
   styleUrls: ['./ventas.page.scss'],
 })

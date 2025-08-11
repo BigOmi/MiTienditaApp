@@ -1,8 +1,6 @@
 <ion-content class="dashboard-content">
-
   <ion-grid class="dashboard-grid">
 
-    <!-- Tarjetas resumen -->
     <ion-row>
       <ion-col size="12" size-md="6" *ngFor="let card of summaryCards">
         <ion-card class="summary-card" [ngClass]="card.bgClass">
@@ -16,20 +14,20 @@
       </ion-col>
     </ion-row>
 
-    <!-- Gráfico y Ventas recientes -->
     <ion-row>
       <ion-col size="12" size-md="8">
         <ion-card class="section-card full-height">
           <ion-card-header>
-            <ion-card-title class="text-tertiary">Total Units by Month and Manufacturer</ion-card-title>
+            <ion-card-title class="text-tertiary">Ventas por mes y por día</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <p class="manufacturer-list">
-              <span *ngFor="let manufacturer of chartData.manufacturers; let last = last">
-                {{ manufacturer }}<span *ngIf="!last"> ● </span>
-              </span>
-            </p>
-            <div class="chart-placeholder">[ Aquí irá el gráfico ]</div>
+            <div style="height: 300px;">
+              <canvas baseChart
+                [data]="lineChartData"
+                [options]="lineChartOptions"
+                [type]="'line'">
+              </canvas>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -52,5 +50,4 @@
     </ion-row>
 
   </ion-grid>
-
 </ion-content>
