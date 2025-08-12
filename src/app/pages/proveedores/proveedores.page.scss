@@ -4,7 +4,7 @@
 }
 
 ion-content {
-  --background: #f6f8f7;
+  --background: var(--ion-background-color, #f6f8f7);
   --padding-top: 0;
   --offset-top: 0px;
   padding-top: 0;
@@ -22,16 +22,16 @@ ion-grid {
 }
 
 .searchbar-custom {
-  --background: #ffffff;
-  --color: var(--ion-color-dark);
+  --background: var(--ion-card-background, #ffffff);
+  --color: var(--ion-text-color, var(--ion-color-dark));
   --placeholder-color: var(--ion-color-medium);
   --icon-color: var(--ion-color-success);
   --border-radius: 12px;
 }
 
 .select-filtro {
-  background: #ffffff;
-  border: 1px solid var(--ion-color-medium);
+  background: var(--ion-card-background, #ffffff);
+  border: 1px solid rgba(128, 128, 128, 0.25);
   border-radius: 8px;
   --padding-start: 8px;
   --padding-end: 8px;
@@ -42,6 +42,32 @@ ion-card {
   margin-bottom: 16px;
   border-radius: 16px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+/* Utilidades compartidas */
+.card-elevated {
+  background: var(--ion-card-background, #ffffff);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.card-elevated:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.badges-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.chip-compact {
+  height: 24px;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  font-size: 12px;
 }
 
 ion-card-title {
@@ -70,7 +96,7 @@ ion-button {
   margin-bottom: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
   transition: transform 0.2s ease;
-  background: #ffffff;
+  background: var(--ion-card-background, #ffffff);
   border-left: 4px solid var(--ion-color-primary);
 }
 
@@ -109,13 +135,13 @@ ion-button {
   font-size: 1rem;
   font-weight: 600;
   margin: 0;
-  color: var(--ion-color-dark);
+  color: var(--ion-text-color, var(--ion-color-dark));
 }
 
 .producto-precio {
   font-size: 0.85rem;
   margin: 2px 0;
-  color: var(--ion-color-dark);
+  color: var(--ion-text-color, var(--ion-color-dark));
 }
 
 .producto-precio .venta {
@@ -187,7 +213,7 @@ ion-button {
   padding: 12px;
   margin-bottom: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-  background: #ffffff;
+  background: var(--ion-card-background, #ffffff);
   border-left: 4px solid var(--ion-color-primary);
   transition: transform 0.2s ease;
   cursor: pointer;
@@ -209,7 +235,7 @@ ion-button {
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0 0 6px 0;
-  color: var(--ion-color-dark);
+  color: var(--ion-text-color, var(--ion-color-dark));
   text-transform: capitalize;
 }
 
@@ -237,7 +263,7 @@ ion-button[fill="clear"] {
   --min-height: 36px;
   border-radius: 50%;
   transition: background-color 0.25s ease;
-  color: #4b5563;
+  color: var(--ion-text-color, #4b5563);
   box-shadow: none;
   border: none;
   background: transparent;

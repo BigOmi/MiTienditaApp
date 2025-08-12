@@ -24,31 +24,41 @@
     <ion-row class="ion-margin-top" style="gap:16px;">
       @for (prov of proveedoresFiltrados(); track prov.id) {
         <ion-col size="12" size-md="6">
-          <ion-card class="proveedor-card">
-            <ion-row class="ion-align-items-center">
-
-              <ion-col size="8" class="info-mini-col">
+          <ion-card class="proveedor-card card-elevated">
+            <ion-item lines="none">
+              <ion-icon slot="start" name="storefront-outline" class="icono-proveedor"></ion-icon>
+              <ion-label>
                 <h3 class="proveedor-nombre">{{ prov.nombre }} {{ prov.apellido }}</h3>
-                <p class="proveedor-contacto">{{ prov.telefono }} | {{ prov.email }}</p>
                 <p class="proveedor-fecha">{{ prov.created_at | date:'mediumDate' }}</p>
-                <p class="proveedor-detalles"><strong>Tipo Producto:</strong> {{ prov.tipo_producto }}</p>
-              </ion-col>
-
-              <ion-col size="4" class="acciones-mini-col">
+                <div class="badges-row">
+                  <ion-chip color="primary" class="chip-compact" *ngIf="prov.tipo_producto">
+                    <ion-icon name="pricetag-outline"></ion-icon>
+                    <ion-label>{{ prov.tipo_producto }}</ion-label>
+                  </ion-chip>
+                  <ion-chip color="medium" class="chip-compact" *ngIf="prov.telefono">
+                    <ion-icon name="call-outline"></ion-icon>
+                    <ion-label>{{ prov.telefono }}</ion-label>
+                  </ion-chip>
+                  <ion-chip color="medium" class="chip-compact" *ngIf="prov.email">
+                    <ion-icon name="mail-outline"></ion-icon>
+                    <ion-label>{{ prov.email }}</ion-label>
+                  </ion-chip>
+                </div>
+              </ion-label>
+              <ion-buttons slot="end" class="acciones-mini-col">
                 <ion-button fill="clear" color="tertiary" size="small" (click)="editarProveedor(prov)">
                   <ion-icon name="create-outline" slot="icon-only"></ion-icon>
                 </ion-button>
                 <ion-button fill="clear" color="danger" size="small" (click)="eliminarProveedor(prov.id)">
                   <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
                 </ion-button>
-              </ion-col>
-
-            </ion-row>
+              </ion-buttons>
+            </ion-item>
           </ion-card>
 
           <!-- Formulario edición debajo del proveedor seleccionado -->
           @if (proveedorEditandoId === prov.id) {
-            <ion-card class="form-edicion-card">
+            <ion-card class="form-edicion-card card-elevated">
               <ion-card-header>
                 <ion-card-title>Editar Proveedor</ion-card-title>
               </ion-card-header>

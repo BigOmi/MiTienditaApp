@@ -5,7 +5,8 @@
 }
 
 ion-content {
-  --background: #f6f8f7;
+  /* Usa variables de tema para soportar dark mode */
+  --background: var(--ion-background-color, #f6f8f7);
   --padding-top: 0;
   --offset-top: 0px;
   padding-top: 0;
@@ -22,8 +23,8 @@ ion-grid {
 }
 
 .searchbar-custom {
-  --background: #ffffff;
-  --color: var(--ion-color-dark);
+  --background: var(--ion-card-background, #ffffff);
+  --color: var(--ion-text-color, var(--ion-color-dark));
   --placeholder-color: var(--ion-color-medium);
   --icon-color: var(--ion-color-success);
   --border-radius: 12px; /* Esto redondea el borde */
@@ -31,8 +32,8 @@ ion-grid {
 
 
 .select-filtro {
-  background: #ffffff;
-  border: 1px solid var(--ion-color-medium);
+  background: var(--ion-card-background, #ffffff);
+  border: 1px solid rgba(128, 128, 128, 0.25);
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 14px;
@@ -52,17 +53,25 @@ ion-input {
 }
 
 /* ===== TARJETAS ===== */
-.usuario-card {
+.card-elevated {
   border-radius: 16px;
-  padding: 10px 16px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-  transition: all 0.2s ease-in-out;
-  background-color: #ffffff;
+  background: var(--ion-card-background, #ffffff);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-.usuario-card:hover {
-  transform: scale(1.01);
+.card-elevated:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.usuario-card {
+  border-left: 4px solid var(--ion-color-primary);
+}
+
+.usuario-item {
+  --inner-padding-end: 8px;
 }
 
 /* ===== COLUMNA: Imagen ===== */
@@ -96,9 +105,9 @@ ion-input {
 
 .usuario-nombre {
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
-  color: var(--ion-color-dark);
+  color: var(--ion-text-color, var(--ion-color-dark));
 }
 
 .usuario-email {
@@ -107,25 +116,33 @@ ion-input {
   margin: 2px 0;
 }
 
-.usuario-rol {
-  font-size: 0.8rem;
-  color: var(--ion-color-success);
-  margin: 2px 0;
-  font-weight: 500;
-}
-
 .usuario-fecha {
   font-size: 0.75rem;
   color: var(--ion-color-medium);
 }
 
+.badges-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.chip-compact {
+  height: 24px;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  --background: color-mix(in srgb, var(--ion-color-success) 10%, transparent);
+  font-size: 12px;
+}
+
 /* ===== COLUMNA: Acciones ===== */
 .acciones-mini-col {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 6px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
   padding-right: 4px;
 }
 
@@ -138,7 +155,6 @@ ion-input {
   }
 
   .usuario-card {
-    padding: 10px 12px;
     margin-bottom: 8px;
   }
 
