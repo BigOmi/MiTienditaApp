@@ -120,5 +120,19 @@
         </ion-card>
       </ion-col>
     </ion-row>
+
+    <!-- Estado de carga -->
+    <ion-row *ngIf="loading">
+      <ion-col class="ion-text-center">
+        <ion-spinner name="crescent"></ion-spinner>
+      </ion-col>
+    </ion-row>
+
+    <!-- Estado vacío -->
+    <ion-row *ngIf="!loading && usuariosFiltrados().length === 0">
+      <ion-col class="ion-text-center">
+        <p>No hay usuarios para mostrar.</p>
+      </ion-col>
+    </ion-row>
   </ion-grid>
 </ion-content>

@@ -1,7 +1,13 @@
+<!-- Encabezado local con botón Atrás -->
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home/ventas" text="Atrás"></ion-back-button>
+      <ion-menu-button menu="main-menu" auto-hide="false"></ion-menu-button>
+    </ion-buttons>
     <ion-title>Registrar Nueva Venta</ion-title>
   </ion-toolbar>
+  
 </ion-header>
 
 <ion-content class="ion-padding">
@@ -17,7 +23,7 @@
 
   <!-- Lista de productos filtrados para agregar -->
   <ion-list *ngIf="productosFiltradosGlobal.length > 0 && textoBusqueda.trim().length > 0">
-    <ion-item button detail lines="full" *ngFor="let producto of productosFiltradosGlobal" (click)="agregarProducto(producto)">
+    <ion-item button detail lines="full" *ngFor="let producto of (productosFiltradosGlobal | slice:0:50); trackBy: trackByProductoId" (click)="agregarProducto(producto)">
       {{ producto.nombre }} (Stock: {{ producto.stock_actual }}) - ${{ producto.precio_venta }}
     </ion-item>
   </ion-list>
@@ -28,15 +34,15 @@
     <ion-item>
       <ion-label>Método de Pago</ion-label>
       <ion-select formControlName="metodo_pago" interface="popover">
-        <ion-select-option value="EFECTIVO">Efectivo</ion-select-option>
-        <ion-select-option value="TARJETA">Tarjeta</ion-select-option>
-        <ion-select-option value="TRANSFERENCIA">Transferencia</ion-select-option>
+        <ion-select-option value="efectivo">Efectivo</ion-select-option>
+        <ion-select-option value="tarjeta">Tarjeta</ion-select-option>
+        <ion-select-option value="transferencia">Transferencia</ion-select-option>
       </ion-select>
     </ion-item>
 
     <!-- Lista de productos agregados (detalles) -->
     <div formArrayName="detalles" class="detalles-venta" style="margin-top: 1rem;">
-      <div *ngFor="let detalle of detalles.controls; let i = index" [formGroupName]="i" class="detalle-row">
+      <div *ngFor="let detalle of detalles.controls; let i = index; trackBy: trackByIndex" [formGroupName]="i" class="detalle-row">
 
         <ion-item lines="none">
           <ion-label>{{ obtenerNombreProducto(detalle.get('productoId')?.value) }}</ion-label>
@@ -45,12 +51,12 @@
             type="number"
             min="1"
             formControlName="cantidad"
-            (ionInput)="calcularDescuentoEnBack()"
+            (ionInput)="onCantidadInput(i)"
             style="width: 80px; text-align: center;">
           </ion-input>
 
           <ion-text slot="end" class="subtotal-text" style="margin-right: 10px;">
-            ${{ calcularSubtotal(detalle) | number:'1.2-2' }}
+            ${{ subtotales[i] | number:'1.2-2' }}
           </ion-text>
 
           <ion-button fill="clear" color="danger" (click)="removeDetalle(i)" aria-label="Eliminar producto" slot="end">
@@ -73,9 +79,25 @@
       <ion-text slot="end">${{ (calcularTotal() - descuentoCalculado) | number:'1.2-2' }}</ion-text>
     </ion-item>
 
-    <ion-button expand="block" type="submit" [disabled]="ventaForm.invalid || detalles.length === 0" style="margin-top: 1.5rem;">
+    <ion-button
+      expand="block"
+      type="submit"
+      [attr.disabled]="(ventaForm.invalid || detalles.length === 0) ? '' : null"
+      style="margin-top: 1.5rem;">
       Registrar Venta
     </ion-button>
 
   </form>
 </ion-content>
+
+<!-- Botón flotante de regresar -->
+<ion-fab slot="fixed" vertical="bottom" horizontal="start">
+  <ion-fab-button color="medium" (click)="goBack()" aria-label="Volver atrás">
+    <ion-icon name="arrow-back"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-list side="top">
+    <ion-fab-button color="primary" (click)="goBack()" aria-label="Volver">
+      <ion-icon name="chevron-back"></ion-icon>
+    </ion-fab-button>
+  </ion-fab-list>
+</ion-fab>

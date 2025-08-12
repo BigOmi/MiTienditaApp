@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -20,7 +21,10 @@ export class ProductsService {
   }
 
   obtenerProductos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/all`);
+    // Intenta /all y si no existe, cae a la ruta base
+    return this.http.get<any[]>(`${this.apiUrl}/all`).pipe(
+      catchError(() => this.http.get<any[]>(`${this.apiUrl}`))
+    );
   }
 
   eliminarProducto(id: number): Observable<any> {

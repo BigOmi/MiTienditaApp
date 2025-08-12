@@ -1,0 +1,11 @@
+.form-grid ion-card {
+  margin-bottom: 12px;
+}
+
+ion-note.hint, ion-note[color="danger"] {
+  margin: 4px 0 8px 8px;
+  font-size: 12px;
+}
+
+.btn-row { display: flex; gap: 12px; margin-top: 8px; }
+

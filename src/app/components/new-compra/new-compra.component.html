@@ -1,11 +1,14 @@
 <ion-header>
   <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home/productos"></ion-back-button>
+    </ion-buttons>
     <ion-title>Nueva Compra</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form [formGroup]="compraForm" (ngSubmit)="crearCompraCompleta()">
+  <form [formGroup]="compraForm" (ngSubmit)="crearCompraCompleta()" class="form-grid">
 
     <!-- Datos de la Compra -->
     <ion-card>
@@ -13,37 +16,63 @@
         <ion-card-title>Datos de la Compra</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-item>
-          <ion-label position="stacked">Número de Factura *</ion-label>
-          <ion-input formControlName="numero_factura" type="text" required></ion-input>
+        <ion-item lines="full">
+          <ion-label>Generar número de factura automáticamente</ion-label>
+          <ion-toggle formControlName="autoFactura"></ion-toggle>
+        </ion-item>
+
+        <!-- Prefijo y fecha cuando es automático -->
+        <ng-container *ngIf="compraForm.get('autoFactura')?.value">
+          <ion-item class="ion-margin-top">
+            <ion-label position="stacked">Prefijo</ion-label>
+            <ion-input formControlName="prefijoFactura" type="text" placeholder="Ej. F-"></ion-input>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label>Recordar prefijo</ion-label>
+            <ion-toggle formControlName="recordarPrefijo"></ion-toggle>
+          </ion-item>
+        </ng-container>
+
+        <ion-item *ngIf="compraForm.get('autoFactura')?.value" lines="none" class="ion-margin-top">
+          <ion-label>
+            <div><strong>Número de factura</strong></div>
+            <div>{{ compraForm.get('numero_factura')?.value }}</div>
+          </ion-label>
+          <ion-button fill="clear" slot="end" (click)="regenerarFactura()">Regenerar</ion-button>
+        </ion-item>
+
+        <ng-container *ngIf="!compraForm.get('autoFactura')?.value">
+          <ion-item>
+            <ion-label position="stacked">Número de factura *</ion-label>
+            <ion-input formControlName="numero_factura" type="text" placeholder="Ej. F-000123" required></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="compraForm.get('numero_factura')?.touched && compraForm.get('numero_factura')?.hasError('required')">Requerido</ion-note>
+        </ng-container>
+
+        <!-- Fecha de compra -->
+        <ion-item class="ion-margin-top">
+          <ion-label position="stacked">Fecha de compra</ion-label>
+          <ion-datetime-button datetime="fechaCompra"></ion-datetime-button>
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime id="fechaCompra" presentation="date" [value]="compraForm.get('fecha')?.value" (ionChange)="onFechaChange($event)"></ion-datetime>
+            </ng-template>
+          </ion-modal>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Proveedor *</ion-label>
-          <ion-select formControlName="proveedor_id" placeholder="Selecciona un proveedor" required>
+          <ion-select formControlName="proveedor_id" interface="popover" placeholder="Selecciona un proveedor" required>
             <ion-select-option *ngFor="let prov of proveedores" [value]="prov.id">
               {{ prov.nombre }} {{ prov.apellido }}
             </ion-select-option>
           </ion-select>
         </ion-item>
+        <ion-note color="danger" *ngIf="compraForm.get('proveedor_id')?.touched && compraForm.get('proveedor_id')?.hasError('required')">Requerido</ion-note>
 
-        <ion-item>
-          <ion-label position="stacked">Estado *</ion-label>
-          <ion-select formControlName="estado" required>
-            <ion-select-option value="pendiente">Pendiente</ion-select-option>
-            <ion-select-option value="completada">Completada</ion-select-option>
-            <ion-select-option value="cancelada">Cancelada</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="stacked">Observaciones</ion-label>
-          <ion-textarea formControlName="observaciones"></ion-textarea>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="stacked">Total</ion-label>
-          <ion-input [value]="total" type="number" readonly></ion-input>
+        <ion-item lines="none" class="ion-margin-top">
+          <ion-label><strong>Total</strong></ion-label>
+          <ion-note slot="end"><strong>{{ total | currency:'MXN':'symbol-narrow':'1.2-2' }}</strong></ion-note>
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -55,49 +84,87 @@
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked">Nombre *</ion-label>
-          <ion-input formControlName="nombre" type="text" required></ion-input>
+          <ion-label position="stacked">Nombre del producto *</ion-label>
+          <ion-input formControlName="nombre" type="text" placeholder="Ej. Agua 600ml" required></ion-input>
         </ion-item>
+        <ion-note color="danger" *ngIf="compraForm.get('nombre')?.touched && compraForm.get('nombre')?.hasError('required')">Requerido</ion-note>
 
         <ion-item>
           <ion-label position="stacked">Descripción</ion-label>
-          <ion-textarea formControlName="descripcion"></ion-textarea>
+          <ion-textarea formControlName="descripcion" placeholder="Opcional"></ion-textarea>
         </ion-item>
 
         <ion-item>
           <ion-label position="stacked">Imagen (URL)</ion-label>
-          <ion-input formControlName="imagen" type="url"></ion-input>
+          <ion-input formControlName="imagen" type="url" placeholder="https://..."></ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Precio Compra *</ion-label>
-          <ion-input formControlName="precio_compra" type="number" min="0.01" step="0.01" required></ion-input>
+          <ion-label position="stacked">Precio de compra *</ion-label>
+          <ion-input formControlName="precio_compra" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" required></ion-input>
         </ion-item>
+        <ion-note color="danger" *ngIf="compraForm.get('precio_compra')?.touched && compraForm.get('precio_compra')?.errors">
+          {{ compraForm.get('precio_compra')?.hasError('required') ? 'Requerido' : 'Debe ser mayor a 0' }}
+        </ion-note>
 
         <ion-item>
-          <ion-label position="stacked">Precio Venta *</ion-label>
-          <ion-input formControlName="precio_venta" type="number" min="0.01" step="0.01" required></ion-input>
+          <ion-label position="stacked">Precio de venta *</ion-label>
+          <ion-input formControlName="precio_venta" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="Sugerido automáticamente" required></ion-input>
         </ion-item>
+        <ion-note color="danger" *ngIf="compraForm.get('precio_venta')?.touched && compraForm.get('precio_venta')?.errors">
+          {{ compraForm.get('precio_venta')?.hasError('required') ? 'Requerido' : 'Debe ser mayor a 0' }}
+        </ion-note>
 
         <ion-item>
-          <ion-label position="stacked">Cantidad a Comprar (stock inicial) *</ion-label>
-          <ion-input formControlName="stock_actual" type="number" min="1" required></ion-input>
+          <ion-label position="stacked">Cantidad a comprar *</ion-label>
+          <ion-input formControlName="stock_actual" type="number" inputmode="numeric" min="1" placeholder="Ej. 24" required></ion-input>
         </ion-item>
+        <ion-note color="danger" *ngIf="compraForm.get('stock_actual')?.touched && compraForm.get('stock_actual')?.errors">
+          {{ compraForm.get('stock_actual')?.hasError('required') ? 'Requerido' : 'Mínimo 1' }}
+        </ion-note>
 
         <ion-item>
           <ion-label position="stacked">Categoría *</ion-label>
-          <ion-select formControlName="categoriaId" placeholder="Selecciona una categoría" required>
+          <ion-select formControlName="categoriaId" interface="popover" placeholder="Selecciona una categoría" required>
             <ion-select-option *ngFor="let cat of categorias" [value]="cat.id">
               {{ cat.nombre }}
             </ion-select-option>
           </ion-select>
         </ion-item>
+        <ion-note color="danger" *ngIf="compraForm.get('categoriaId')?.touched && compraForm.get('categoriaId')?.hasError('required')">Requerido</ion-note>
       </ion-card-content>
     </ion-card>
 
-    <ion-button expand="block" color="success" type="submit" [disabled]="loading || compraForm.invalid">
-      {{ loading ? 'Guardando...' : 'Crear Compra Completa' }}
-    </ion-button>
+    <!-- Opciones avanzadas -->
+    <ion-accordion-group class="ion-margin-top">
+      <ion-accordion value="avanzado">
+        <ion-item slot="header" color="light">
+          <ion-label>Opciones avanzadas</ion-label>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <ion-item>
+            <ion-label position="stacked">Estado</ion-label>
+            <ion-select formControlName="estado">
+              <ion-select-option value="pendiente">Pendiente</ion-select-option>
+              <ion-select-option value="completada">Completada</ion-select-option>
+              <ion-select-option value="cancelada">Cancelada</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Observaciones</ion-label>
+            <ion-textarea formControlName="observaciones" placeholder="Notas adicionales (se autocompleta)"></ion-textarea>
+          </ion-item>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+
+    <div class="btn-row">
+      <ion-button fill="outline" color="medium" type="button" [disabled]="loading" (click)="cancelar()">Cancelar</ion-button>
+      <ion-button expand="block" color="success" type="submit" [disabled]="loading || compraForm.invalid">
+        {{ loading ? 'Guardando...' : 'Crear compra' }}
+      </ion-button>
+    </div>
 
   </form>
 </ion-content>

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, forkJoin, of } from 'rxjs';
+import { catchError, timeout } from 'rxjs/operators';
 import { ProveedoresService } from 'src/app/services/proveedores.service';
 import { CategoriesService } from 'src/app/services/categories.service';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-proveedores',
@@ -26,13 +28,15 @@ export class ProveedoresPage implements OnInit {
     private router: Router,
     private provService: ProveedoresService,
     private categoriesService: CategoriesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private menuCtrl: MenuController
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    // Cierra el menú si estuviera abierto para evitar overlays/inert sobre el contenido
+    try { await this.menuCtrl.close('main-menu'); } catch {}
     this.initForm();
-    this.loadProveedores();
-    this.loadCategorias();
+    this.loadData();
   }
 
   initForm() {
@@ -44,6 +48,45 @@ export class ProveedoresPage implements OnInit {
       telefono: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       direccion: ['', Validators.required]
+    });
+  }
+
+  // Carga concurrente y robusta de proveedores y categorías
+  loadData() {
+    this.loading = true;
+    this.error = null;
+
+    forkJoin({
+      proveedores: this.provService.getProveedores().pipe(
+        timeout(8000),
+        catchError((err) => {
+          console.error('Error proveedores:', err);
+          return of([]);
+        })
+      ),
+      categorias: this.categoriesService.obtenerCategorias().pipe(
+        timeout(8000),
+        catchError((err) => {
+          console.error('Error categorías:', err);
+          return of([]);
+        })
+      ),
+    }).subscribe({
+      next: ({ proveedores, categorias }) => {
+        this.proveedores = proveedores || [];
+        this.categorias = categorias || [];
+        if (!proveedores || proveedores.length === 0) {
+          // No bloquear la UI; sólo informar si es necesario
+          this.error = null; // o un mensaje suave si quieres
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar datos de proveedores/categorías:', err);
+        this.error = 'No se pudieron cargar los datos.';
+      },
+      complete: () => {
+        this.loading = false;
+      },
     });
   }
 

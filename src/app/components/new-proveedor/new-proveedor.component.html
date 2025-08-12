@@ -1,65 +1,109 @@
 <ion-header>
   <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home/proveedores"></ion-back-button>
+    </ion-buttons>
     <ion-title>{{ esEdicion ? 'Editar Proveedor' : 'Nuevo Proveedor' }}</ion-title>
   </ion-toolbar>
+  
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form [formGroup]="proveedorForm" (ngSubmit)="guardarProveedor()">
-
-    <ion-item>
-      <ion-label position="stacked">Nombre</ion-label>
-      <ion-input formControlName="nombre"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="stacked">Apellido</ion-label>
-      <ion-input formControlName="apellido"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="stacked">Edad</ion-label>
-      <ion-input type="number" formControlName="edad"></ion-input>
-    </ion-item>
-
-<ion-item>
-  <ion-label position="stacked">Tipo de Producto</ion-label>
-  <ion-select formControlName="tipo_producto" placeholder="Selecciona categoría">
-    <ion-select-option *ngFor="let cat of categorias" [value]="cat.nombre">
-      {{ cat.nombre }}
-    </ion-select-option>
-  </ion-select>
-</ion-item>
-
-
-
-
-    <ion-item>
-      <ion-label position="stacked">Teléfono</ion-label>
-      <ion-input formControlName="telefono"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="stacked">Email</ion-label>
-      <ion-input type="email" formControlName="email"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="stacked">Dirección</ion-label>
-      <ion-input formControlName="direccion"></ion-input>
-    </ion-item>
-
-    <!-- Campo activo solo en edición -->
-    @if (esEdicion) {
-      <ion-item>
-        <ion-label>Activo</ion-label>
-        <ion-toggle formControlName="activo"></ion-toggle>
+  <ion-card class="form-card">
+    <ion-card-header>
+      <ion-card-title>{{ esEdicion ? 'Editar Proveedor' : 'Nuevo Proveedor' }}</ion-card-title>
+      <ion-card-subtitle>Completa los datos del proveedor</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+  <form [formGroup]="proveedorForm" (ngSubmit)="guardarProveedor()" class="form-grid">
+    <div class="form-row">
+      <ion-item lines="full">
+        <ion-icon name="person-outline" slot="start"></ion-icon>
+        <ion-label position="stacked">Nombre *</ion-label>
+        <ion-input formControlName="nombre" placeholder="Ej. Juan" autocapitalize="words"></ion-input>
       </ion-item>
+      <ion-note color="danger" *ngIf="proveedorForm.get('nombre')?.touched && proveedorForm.get('nombre')?.hasError('required')">Requerido</ion-note>
+    </div>
+
+    <div class="form-row">
+      <ion-item lines="full">
+        <ion-icon name="person-outline" slot="start"></ion-icon>
+        <ion-label position="stacked">Apellido *</ion-label>
+        <ion-input formControlName="apellido" placeholder="Ej. Pérez" autocapitalize="words"></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="proveedorForm.get('apellido')?.touched && proveedorForm.get('apellido')?.hasError('required')">Requerido</ion-note>
+    </div>
+
+    <div class="form-row">
+      <ion-item lines="full">
+        <ion-icon name="calendar-outline" slot="start"></ion-icon>
+        <ion-label position="stacked">Edad *</ion-label>
+        <ion-input type="number" inputmode="numeric" formControlName="edad" min="18" placeholder="18"></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="proveedorForm.get('edad')?.touched && proveedorForm.get('edad')?.errors">
+        {{ proveedorForm.get('edad')?.hasError('required') ? 'Requerido' : 'Debe ser mayor o igual a 18' }}
+      </ion-note>
+    </div>
+
+    <div class="form-row">
+      <ion-item lines="full">
+        <ion-icon name="pricetags-outline" slot="start"></ion-icon>
+        <ion-label position="stacked">Tipo de Producto *</ion-label>
+        <ion-select formControlName="tipo_producto" placeholder="Selecciona categoría" interface="popover">
+          <ion-select-option *ngFor="let cat of categorias" [value]="cat.nombre">
+            {{ cat.nombre }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-note color="medium" class="hint">Sirve para clasificar al proveedor por su rubro principal.</ion-note>
+    </div>
+
+    <div class="form-row">
+      <ion-item lines="full">
+        <ion-icon name="call-outline" slot="start"></ion-icon>
+        <ion-label position="stacked">Teléfono *</ion-label>
+        <ion-input formControlName="telefono" inputmode="tel" placeholder="10 dígitos" maxlength="15"></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="proveedorForm.get('telefono')?.touched && proveedorForm.get('telefono')?.hasError('required')">Requerido</ion-note>
+    </div>
+
+    <div class="form-row">
+      <ion-item lines="full">
+        <ion-icon name="mail-outline" slot="start"></ion-icon>
+        <ion-label position="stacked">Email *</ion-label>
+        <ion-input type="email" formControlName="email" placeholder="correo@dominio.com" inputmode="email" autocapitalize="off"></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="proveedorForm.get('email')?.touched && proveedorForm.get('email')?.errors">
+        {{ proveedorForm.get('email')?.hasError('required') ? 'Requerido' : 'Email inválido' }}
+      </ion-note>
+    </div>
+
+    <div class="form-row">
+      <ion-item lines="full">
+        <ion-icon name="location-outline" slot="start"></ion-icon>
+        <ion-label position="stacked">Dirección *</ion-label>
+        <ion-input formControlName="direccion" placeholder="Calle, número, colonia, ciudad"></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="proveedorForm.get('direccion')?.touched && proveedorForm.get('direccion')?.hasError('required')">Requerido</ion-note>
+    </div>
+
+    @if (esEdicion) {
+      <div class="form-row">
+        <ion-item>
+          <ion-label>Activo</ion-label>
+          <ion-toggle formControlName="activo"></ion-toggle>
+        </ion-item>
+      </div>
     }
 
-    <ion-button expand="block" type="submit" [disabled]="proveedorForm.invalid">
-      {{ esEdicion ? 'Actualizar' : 'Crear' }}
-    </ion-button>
+    <div class="btn-row">
+      <ion-button fill="outline" color="medium" type="button" (click)="cancelar()" [disabled]="guardando">Cancelar</ion-button>
+      <ion-button expand="block" type="submit" [disabled]="proveedorForm.invalid || guardando" color="success">
+        {{ guardando ? 'Guardando...' : (esEdicion ? 'Actualizar' : 'Crear') }}
+      </ion-button>
+    </div>
 
   </form>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

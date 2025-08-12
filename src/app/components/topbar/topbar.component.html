@@ -1,44 +1,24 @@
 <ion-header>
   <ion-toolbar color="primary" class="topbar-toolbar">
     <ion-buttons slot="start">
-      <ion-router-outlet id="main-content"></ion-router-outlet>
-      <ion-menu-button menu="main-menu" class="menu-hamburger"></ion-menu-button>
+      <ion-menu-button menu="main-menu" class="menu-hamburger" aria-label="Abrir menú"></ion-menu-button>
     </ion-buttons>
-    <ion-title class="ion-text-capitalize">{{ pageTitle }}</ion-title>
-    <ion-buttons slot="end" >
-      @if(showNuevaVenta) {
-        <ion-button (click)="nVenta()" color="warning" class="nueva-venta-btn" size="small">
-          <span class="nueva-venta-text">Nueva Venta</span>
-        </ion-button>
-      }
-      <ion-avatar class="avatar-small">
-  <img [src]="avatarUrl" alt="Avatar" />
-</ion-avatar>
 
+    <ion-title class="ion-text-capitalize">{{ pageTitle }}</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" size="small" (click)="toggleTheme()" aria-label="Cambiar tema">
+        <ion-icon [name]="isDark ? 'moon' : 'sunny'" slot="icon-only"></ion-icon>
+      </ion-button>
+
+      <ion-button *ngIf="showNuevaVenta" (click)="nVenta()" color="warning" class="nueva-venta-btn" size="small">
+        <span class="nueva-venta-text">Nueva Venta</span>
+      </ion-button>
+
+      <ion-avatar class="avatar-small" (click)="openAccountMenu()" style="cursor: pointer;">
+        <img [src]="avatarUrl" alt="Avatar" />
+      </ion-avatar>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
-<ion-menu side="start" menuId="main-menu" contentId="main-content" class="custom-menu" style="--width: 240px;">
-  <ion-header>
-    <ion-toolbar color="primary" class="menu-toolbar">
-      <ion-img src="assets/logo.jpg" alt="Logo" class="menu-logo"></ion-img>
-    </ion-toolbar>
-  </ion-header>
-  <ion-content class="menu-content">
-    <ion-list class="menu-list">
-      <ion-menu-toggle auto-hide="false" *ngFor="let route of menuRoutes">
-        <ion-item
-          button
-          [routerLink]="route.path"
-          (click)="navigateTo(route.path)"
-          [class.selected]="selectedPath === route.path"
-          lines="none"
-        >
-          <ion-icon [name]="route.icon" slot="start"></ion-icon>
-          <ion-label class="menu-label">{{ route.label }}</ion-label>
-        </ion-item>
-      </ion-menu-toggle>
-    </ion-list>
-  </ion-content>
-</ion-menu>
+ 

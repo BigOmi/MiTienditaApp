@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://mi_tiendita.com' // URL de tu API en producción
+  apiUrl: 'http://TU_SERVIDOR_BACKEND:3000' // URL HTTP de tu API en producción (reemplazar al desplegar)
 };

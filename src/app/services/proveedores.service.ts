@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -12,7 +13,10 @@ export class ProveedoresService {
   constructor(private http: HttpClient) {}
 
   getProveedores(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    // Intenta /all si existe en tu API
+    return this.http.get<any[]>(`${this.apiUrl}/all`).pipe(
+      catchError(() => this.http.get<any[]>(this.apiUrl))
+    );
   }
 
   getProveedor(id: number): Observable<any> {

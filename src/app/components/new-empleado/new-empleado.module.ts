@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-
-import { NewEmpleadoPageRoutingModule } from './new-empleado-routing.module';
 import { NewEmpleadoPage } from './new-empleado.page';
+import { NewEmpleadoPageRoutingModule } from './new-empleado-routing.module';
 
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     IonicModule,
     NewEmpleadoPageRoutingModule,
-    NewEmpleadoPage // 👈 Aquí se importa el componente standalone
-  ]
+    NewEmpleadoPage
+  ],
+  declarations: []
 })
-export class NewEmpleadoPageModule {}
+export class NewEmpleadoPageModule { }

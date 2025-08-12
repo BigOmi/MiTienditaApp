@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { ProductsService } from 'src/app/services/products.service';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   standalone: false,
@@ -27,10 +28,13 @@ export class ProductosPage implements OnInit {
     private router: Router,
     private productS: ProductsService,
     private categoryS: CategoriesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private menuCtrl: MenuController
   ) {}
 
   async ngOnInit() {
+    // Cierra el menú si estuviera abierto para evitar overlays/inert sobre el contenido
+    try { await this.menuCtrl.close('main-menu'); } catch {}
     this.initForm();
     await this.cargarCategorias();
     await this.cargarProductos();

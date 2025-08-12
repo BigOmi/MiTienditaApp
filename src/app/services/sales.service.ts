@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -26,7 +27,10 @@ calcularDescuento(total: number) {
   }
 
   obtenerVentas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/all`);
+    // Fallback a la ruta base si /all no existe
+    return this.http.get<any[]>(`${this.apiUrl}/all`).pipe(
+      catchError(() => this.http.get<any[]>(`${this.apiUrl}`))
+    );
   }
 
   obtenerVentaPorId(id: number): Observable<any> {
