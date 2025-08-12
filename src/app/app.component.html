@@ -1,7 +1,7 @@
 <ion-app>
-  <app-topbar></app-topbar>
+  <app-topbar *ngIf="!isAuthRoute"></app-topbar>
 
-  <ion-menu side="start" type="overlay" menuId="main-menu" contentId="main-content" class="custom-menu" swipe-gesture="true">
+  <ion-menu *ngIf="!isAuthRoute" side="start" type="overlay" menuId="main-menu" contentId="main-content" class="custom-menu" swipe-gesture="true">
     <ion-header>
       <ion-toolbar color="light" class="menu-toolbar">
         <ion-img src="assets/logo.jpg" alt="Logo" class="menu-logo" aria-label="Logo"></ion-img>

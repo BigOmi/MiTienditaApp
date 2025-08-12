@@ -126,35 +126,73 @@ export class ProductosPage implements OnInit {
   }
 
   cancelarEdicion() {
-    this.editForm.reset();
-    this.productoEditandoId = null;
+  this.editForm.reset();
+  this.productoEditandoId = null;
+  this.router.navigateByUrl('/home/productos');
   }
 
   async guardarCambios() {
+
     if (this.editForm.invalid || this.productoEditandoId === null) return;
 
-    const formValues = this.editForm.value;
+    // Validar que el producto existe
     const productoOriginal = this.productos.find(p => p.id === this.productoEditandoId);
+    if (!productoOriginal) {
+      alert('El producto que intentas editar no existe.');
+      return;
+    }
 
-    const payload = {
+    const formValues = this.editForm.value;
+    // Validar que la categoría existe
+    const categoriaIdNum = Number(formValues.categoria);
+    if (!categoriaIdNum || Number.isNaN(categoriaIdNum) || !this.categorias.some(c => c.id === categoriaIdNum)) {
+      alert('Selecciona una categoría válida.');
+      return;
+    }
+
+    // Coerción a tipos esperados por el backend usando valores EDITADOS
+    const payload: any = {
       nombre: formValues.nombre,
       descripcion: formValues.descripcion,
       imagen: formValues.imagen,
-      precio_venta: formValues.precioVenta,
-      precio_compra: productoOriginal?.precioCompra ?? 0,
-      stock_actual: productoOriginal?.stock ?? 0,
-      activo: formValues.activo,
-      categoriaId: formValues.categoria
+      precio_compra: Number(formValues.precioCompra ?? productoOriginal?.precioCompra ?? 0),
+      precio_venta: Number(formValues.precioVenta ?? productoOriginal?.precioVenta ?? 0),
+      stock_actual: Number(formValues.stock ?? productoOriginal?.stock ?? 0),
+      categoriaId: categoriaIdNum
     };
+    // Solo agregar 'activo' si el usuario lo editó (opcional en el DTO)
+    if (typeof formValues.activo === 'boolean') {
+      payload.activo = formValues.activo;
+    }
+    // Eliminar campos vacíos o nulos y limpiar cualquier campo extra
+    const allowedFields = ['nombre','descripcion','imagen','precio_compra','precio_venta','stock_actual','categoriaId','activo'];
+    Object.keys(payload).forEach(key => {
+      if (payload[key] === null || payload[key] === undefined || payload[key] === '' || !allowedFields.includes(key)) {
+        delete payload[key];
+      }
+    });
 
     try {
+      console.log('Actualizando producto', this.productoEditandoId, 'con payload:', payload);
       await firstValueFrom(this.productS.editarProducto(this.productoEditandoId, payload));
       alert('Producto actualizado');
-      this.cancelarEdicion();
-      await this.cargarProductos();
+      this.router.navigateByUrl('/home/productos');
     } catch (error) {
-      console.error('Error actualizando producto:', error);
-      alert('Error al actualizar el producto');
+      let backendMsg = '';
+      try {
+        const err: any = error as any;
+        console.error('Error actualizando producto:', err, 'backend says:', err?.error);
+        if (err?.error?.message) {
+          if (Array.isArray(err.error.message)) {
+            backendMsg = err.error.message.join('\n');
+          } else {
+            backendMsg = err.error.message;
+          }
+        }
+      } catch {
+        console.error('Error actualizando producto:', error);
+      }
+      alert('Error al actualizar el producto.' + (backendMsg ? ('\n' + backendMsg) : ''));
     }
   }
 

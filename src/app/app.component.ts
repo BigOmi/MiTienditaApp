@@ -36,6 +36,7 @@ export class AppComponent {
   selectedPath = '/home/dashboard';
   menuQuery = '';
   private subs: Subscription[] = [];
+  isAuthRoute = false;
 
   constructor(
     private router: Router,
@@ -46,6 +47,8 @@ export class AppComponent {
   ) {
     this.listenToRouteChanges();
     this.loadBadges();
+    // Estado inicial al arrancar
+    this.isAuthRoute = this.isAuthPath(this.router.url || '');
   }
 
   navigateTo(path: string) {
@@ -65,6 +68,7 @@ export class AppComponent {
         const url = event.urlAfterRedirects || event.url;
         const currentRoute = this.menuRoutes.find(r => url.startsWith(r.path));
         this.selectedPath = currentRoute?.path || '';
+        this.isAuthRoute = this.isAuthPath(url);
       })
     );
   }
@@ -101,5 +105,10 @@ export class AppComponent {
 
   private getTodayString(): string {
     return new Date().toISOString().slice(0, 10);
+  }
+
+  private isAuthPath(url: string): boolean {
+    // Ocultar header/menu en rutas de autenticación
+    return url.startsWith('/login') || url.startsWith('/forgot-password');
   }
 }

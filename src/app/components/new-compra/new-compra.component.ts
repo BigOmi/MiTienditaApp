@@ -140,6 +140,38 @@ export class NewCompraComponent implements OnInit {
       return;
     }
 
+    // Validaciones adicionales para evitar errores 400
+    const nombre = this.compraForm.value.nombre?.trim() || '';
+    if (nombre.length < 3 || nombre.length > 20) {
+      this.notification.error('El nombre debe tener entre 3 y 20 caracteres.');
+      await this.mostrarAlerta('Error', 'El nombre debe tener entre 3 y 20 caracteres.');
+      return;
+    }
+    const precioCompra = Number(this.compraForm.value.precio_compra);
+    const precioVenta = Number(this.compraForm.value.precio_venta);
+    if (isNaN(precioCompra) || isNaN(precioVenta) || precioCompra <= 0 || precioVenta <= 0) {
+      this.notification.error('Los precios deben ser números mayores a 0.');
+      await this.mostrarAlerta('Error', 'Los precios deben ser números mayores a 0.');
+      return;
+    }
+    if (precioVenta <= precioCompra) {
+      this.notification.error('El precio de venta debe ser mayor que el precio de compra.');
+      await this.mostrarAlerta('Error', 'El precio de venta debe ser mayor que el precio de compra.');
+      return;
+    }
+    const stock = Number(this.compraForm.value.stock_actual);
+    if (isNaN(stock) || stock < 1) {
+      this.notification.error('El stock debe ser un número mayor o igual a 1.');
+      await this.mostrarAlerta('Error', 'El stock debe ser un número mayor o igual a 1.');
+      return;
+    }
+    const categoriaId = Number(this.compraForm.value.categoriaId);
+    if (!categoriaId || isNaN(categoriaId) || !this.categorias.some(c => c.id === categoriaId)) {
+      this.notification.error('Selecciona una categoría válida.');
+      await this.mostrarAlerta('Error', 'Selecciona una categoría válida.');
+      return;
+    }
+
     this.loading = true;
     try {
       // Si autoFactura está activo, asegurar número actualizado
@@ -147,7 +179,8 @@ export class NewCompraComponent implements OnInit {
         this.compraForm.get('numero_factura')?.setValue(this.generarNumeroFactura());
       }
       // 1. Crear producto
-      const productoPayload = {
+      // Limpiar payload: solo los campos permitidos por el backend
+      const productoPayload: any = {
         nombre: this.compraForm.value.nombre,
         descripcion: this.compraForm.value.descripcion,
         imagen: this.compraForm.value.imagen,
@@ -156,6 +189,13 @@ export class NewCompraComponent implements OnInit {
         stock_actual: Number(this.compraForm.value.stock_actual),
         categoriaId: this.compraForm.value.categoriaId,
       };
+      // Eliminar cualquier campo extra que pudiera colarse
+      const allowedFields = ['nombre','descripcion','imagen','precio_compra','precio_venta','stock_actual','categoriaId'];
+      Object.keys(productoPayload).forEach(key => {
+        if (!allowedFields.includes(key) || productoPayload[key] === undefined) {
+          delete productoPayload[key];
+        }
+      });
       const productoCreado = await this.productsService.crearProducto(productoPayload).toPromise();
 
       // 2. Crear compra
@@ -187,6 +227,7 @@ export class NewCompraComponent implements OnInit {
       this.notification.success('Compra completa registrada correctamente.');
       await this.mostrarAlerta('Éxito', 'Compra completa registrada correctamente.');
       this.compraForm.reset({ estado: 'pendiente' });
+      this.router.navigateByUrl('/home/productos');
     } catch (error) {
       console.error('Error creando compra completa', error);
       this.notification.error('No se pudo registrar la compra completa.');
