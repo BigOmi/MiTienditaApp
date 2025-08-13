@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://mi_tiendita.com' // URL de tu API en producción
+  apiUrl: 'https://backmitienditanest-1.onrender.com' // URL de tu API en producción
 };
