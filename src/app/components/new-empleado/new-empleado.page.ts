@@ -1,16 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsersService } from 'src/app/services/users.service';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 @Component({
   selector: 'app-new-empleado',
   templateUrl: './new-empleado.page.html',
   styleUrls: ['./new-empleado.page.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class NewEmpleadoPage implements OnInit {
   usuarioForm!: FormGroup;
@@ -18,7 +22,8 @@ export class NewEmpleadoPage implements OnInit {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private notification: NotificationService
   ) {}
 
   ngOnInit() {
@@ -38,14 +43,17 @@ export class NewEmpleadoPage implements OnInit {
       this.usersService.crearUsuario(this.usuarioForm.value).subscribe({
         next: (res) => {
           console.log('Usuario creado exitosamente:', res);
+          this.notification.success('Usuario creado exitosamente.');
           this.router.navigate(['/home/usuarios']);
         },
         error: (err) => {
           console.error('Error al crear usuario:', err);
+          this.notification.error('Error al crear usuario.');
         },
       });
     } else {
       this.usuarioForm.markAllAsTouched();
+      this.notification.error('Por favor completa los campos requeridos.');
     }
   }
 }

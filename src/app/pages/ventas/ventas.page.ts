@@ -1,16 +1,16 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { ProductsService } from 'src/app/services/products.service';
 import { SalesService } from 'src/app/services/sales.service';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  standalone: true,
   selector: 'app-ventas',
-  imports: [CommonModule, IonicModule, FormsModule],
   templateUrl: './ventas.page.html',
   styleUrls: ['./ventas.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class VentasPage implements OnInit {
   busqueda: string = '';
@@ -18,10 +18,15 @@ export class VentasPage implements OnInit {
   showCalendar: boolean = false;
   filtroFecha: 'dia' | 'semana' | 'mes' | 'ninguno' = 'ninguno';
   semanaSeleccionada: { inicio: string; fin: string } | null = null;
+  desde: string = '';
+  hasta: string = '';
+  filtroPago: string = '';
+  filtroStatus: string = '';
 
   ventas: any[] = [];
   ventasFiltradas: any[] = [];
   productos: any[] = [];
+  loading = true;
 
   // Modal
   modalAbierto = false;
@@ -95,8 +100,9 @@ export class VentasPage implements OnInit {
           };
         });
         this.ventasFiltradas = [...this.ventas];
+        this.loading = false;
       },
-      error: (err) => console.error('Error al cargar ventas', err),
+      error: (err) => { console.error('Error al cargar ventas', err); this.loading = false; },
     });
   }
 
@@ -116,8 +122,21 @@ export class VentasPage implements OnInit {
           val?.toString().toLowerCase().includes(query)
         );
 
+      const matchPago = !this.filtroPago || (venta.metodoPago || '').toLowerCase() === this.filtroPago.toLowerCase();
+      const matchStatus = !this.filtroStatus || (venta.status || '').toLowerCase() === this.filtroStatus.toLowerCase();
+
+      // Rango manual cuando filtro es 'ninguno'
+      if (filtroFecha === 'ninguno' && (this.desde || this.hasta)) {
+        const fv = new Date(venta.fecha);
+        const from = this.desde ? new Date(this.desde) : null;
+        const to = this.hasta ? new Date(this.hasta) : null;
+        const inFrom = !from || fv >= from;
+        const inTo = !to || fv <= to;
+        return matchBusqueda && matchPago && matchStatus && inFrom && inTo;
+      }
+
       if (!this.fechaSeleccionada || filtroFecha === 'ninguno') {
-        return matchBusqueda;
+        return matchBusqueda && matchPago && matchStatus;
       }
 
       const fechaVenta = new Date(venta.fecha);
@@ -130,7 +149,7 @@ export class VentasPage implements OnInit {
           fechaVenta.getFullYear() === fechaSeleccionada.getFullYear(),
       }[filtroFecha];
 
-      return matchBusqueda && matchFecha;
+      return matchBusqueda && matchPago && matchStatus && matchFecha;
     });
 
     if (filtroFecha === 'semana' && this.fechaSeleccionada) {
@@ -145,6 +164,16 @@ export class VentasPage implements OnInit {
     } else {
       this.semanaSeleccionada = null;
     }
+  }
+
+  // Ordenamiento simple por columnas
+  ordenarPor(campo: 'id'|'cantidad'|'usuario'|'metodoPago'|'total'|'fecha'|'hora'|'status') {
+    this.ventasFiltradas = [...this.ventasFiltradas].sort((a, b) => {
+      const va = a[campo];
+      const vb = b[campo];
+      if (campo === 'total' || campo === 'cantidad') return Number(vb) - Number(va);
+      return String(va).localeCompare(String(vb));
+    });
   }
 
   toggleCalendar() {
@@ -206,5 +235,36 @@ export class VentasPage implements OnInit {
   formatPrecio(valor: any): string {
     const num = Number(valor);
     return isNaN(num) ? '0.00' : num.toFixed(2);
+  }
+
+  statusClass(status: string): string {
+    const s = (status || '').toLowerCase();
+    if (s.includes('cancel')) return 'badge-danger';
+    if (s.includes('pend')) return 'badge-warning';
+    return 'badge-success';
+  }
+
+  exportarCSV() {
+    const headers = ['ID Venta','Cant. Productos','Usuario','Pago','Total','Fecha','Hora','Status'];
+    const rows = this.ventasFiltradas.map(v => [
+      v.id,
+      v.cantidad,
+      v.usuario,
+      v.metodoPago,
+      v.total,
+      v.fecha,
+      v.hora,
+      v.status
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(val => `"${String(val ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ventas_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 }

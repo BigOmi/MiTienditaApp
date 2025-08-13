@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-title>Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" [fullscreen]="true">
+  <ng-container *ngIf="hasUser; else emptyState">
+    <ion-card>
+      <ion-card-header>
+        <ion-item lines="none">
+          <ion-avatar slot="start">
+            <img [src]="user?.imagen || 'assets/user.jpeg'" alt="Avatar" />
+          </ion-avatar>
+          <ion-label>
+            <ion-card-title>Perfil</ion-card-title>
+            <p class="ion-text-wrap ion-text-capitalize">{{ user?.nombre }} {{ user?.apellido }}</p>
+            <ion-note>{{ user?.email }}</ion-note>
+          </ion-label>
+        </ion-item>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list lines="full">
+          <ion-item>
+            <ion-label><strong>Nombre</strong></ion-label>
+            <ion-note slot="end">{{ user?.nombre }}</ion-note>
+          </ion-item>
+          <ion-item>
+            <ion-label><strong>Apellido</strong></ion-label>
+            <ion-note slot="end">{{ user?.apellido }}</ion-note>
+          </ion-item>
+          <ion-item>
+            <ion-label><strong>Email</strong></ion-label>
+            <ion-note slot="end">{{ user?.email }}</ion-note>
+          </ion-item>
+          <ion-item *ngIf="user?.rol">
+            <ion-label><strong>Rol</strong></ion-label>
+            <ion-note slot="end">{{ user?.rol }}</ion-note>
+          </ion-item>
+        </ion-list>
+
+        
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <ion-grid class="ion-padding">
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-icon name="person-circle-outline" size="large" color="medium"></ion-icon>
+          <h3>Sin sesión</h3>
+          <p>No encontramos información de usuario. Inicia sesión nuevamente.</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-template>
+</ion-content>

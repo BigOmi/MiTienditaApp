@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -16,11 +17,20 @@ export class ProductsService {
   }
 
   editarProducto(id: number, producto: any): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/${id}`, producto);
+    const url = `${this.apiUrl}/${id}`;
+    // Limpiar payload de valores undefined
+    const cleanPayload: any = {};
+    Object.keys(producto).forEach(key => {
+      if (producto[key] !== undefined) cleanPayload[key] = producto[key];
+    });
+    return this.http.patch<any>(url, cleanPayload);
   }
 
   obtenerProductos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/all`);
+    // Intenta /all y si no existe, cae a la ruta base
+    return this.http.get<any[]>(`${this.apiUrl}/all`).pipe(
+      catchError(() => this.http.get<any[]>(`${this.apiUrl}`))
+    );
   }
 
   eliminarProducto(id: number): Observable<any> {

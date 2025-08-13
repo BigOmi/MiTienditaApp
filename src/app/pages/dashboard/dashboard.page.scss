@@ -1,5 +1,5 @@
 .dashboard-content {
-  background-color: #f6f8f7 !important;
+  background-color: var(--ion-background-color) !important;
   --background: transparent !important;
 
   display: flex;
@@ -7,6 +7,33 @@
   overflow-y: auto;
   padding-bottom: 3rem; // MÁS ESPACIO ABAJO
   min-height: 100vh;
+}
+
+/* Chart section improvements */
+.chart-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 340px;
+}
+
+@media (min-width: 992px) {
+  .chart-wrapper { height: 380px; }
+}
+
+ion-segment {
+  --background: var(--ion-item-background);
+  border-radius: 10px;
+}
+ion-segment-button::part(indicator) {
+  border-radius: 8px;
+}
+ion-segment-button {
+  --color: var(--ion-text-color);
 }
 
 .dashboard-grid {
@@ -53,7 +80,7 @@
 
 .section-card {
   border-radius: 16px;
-  background: var(--ion-color-light);
+  background: var(--ion-card-background);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
@@ -90,7 +117,7 @@
 
 .sale-amount {
   font-weight: 600;
-  color: var(--ion-color-dark);
+  color: var(--ion-text-color);
 }
 
 .sale-status {

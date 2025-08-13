@@ -23,7 +23,7 @@
           <ion-select-option value="mes">Por Mes</ion-select-option>
         </ion-select>
 
-        <!-- Ícono + calendario -->
+        <!-- Ícono + calendario + rango -->
         <div class="icono-calendario" (click)="$event.stopPropagation()">
           <ion-icon
             name="calendar-outline"
@@ -39,6 +39,18 @@
             class="datetime-inline"
           ></ion-datetime>
         </div>
+
+        <div class="rango-fechas" *ngIf="filtroFecha==='ninguno'">
+          <ion-input type="date" [(ngModel)]="desde" (ionChange)="filtrarVentas()" placeholder="Desde"></ion-input>
+          <ion-input type="date" [(ngModel)]="hasta" (ionChange)="filtrarVentas()" placeholder="Hasta"></ion-input>
+        </div>
+      </div>
+
+      <div class="acciones-derecha">
+        <ion-button fill="outline" color="secondary" size="small" (click)="exportarCSV()">
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          Exportar CSV
+        </ion-button>
       </div>
     </div>
 
@@ -49,31 +61,47 @@
     </div>
 
     <!-- Tabla -->
-    <div class="tabla-card">
+    <div class="tabla-card" *ngIf="!loading; else skeletonTabla">
       <table class="ventas-tabla">
         <thead>
           <tr>
-            <th>ID Venta</th>
-            <th>Cant. Productos</th>
-            <th>Usuario</th>
-            <th>Pago</th>
-            <th>Total</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Status</th>
+            <th (click)="ordenarPor('id')">ID Venta</th>
+            <th (click)="ordenarPor('cantidad')">Cant. Productos</th>
+            <th (click)="ordenarPor('usuario')">Usuario</th>
+            <th>
+              <ion-select size="small" interface="popover" placeholder="Pago" (ionChange)="filtrarVentas()" [(ngModel)]="filtroPago">
+                <ion-select-option value="">Todos</ion-select-option>
+                <ion-select-option value="efectivo">Efectivo</ion-select-option>
+                <ion-select-option value="tarjeta">Tarjeta</ion-select-option>
+                <ion-select-option value="transferencia">Transferencia</ion-select-option>
+              </ion-select>
+            </th>
+            <th (click)="ordenarPor('total')">Total</th>
+            <th (click)="ordenarPor('fecha')">Fecha</th>
+            <th (click)="ordenarPor('hora')">Hora</th>
+            <th>
+              <ion-select size="small" interface="popover" placeholder="Estado" (ionChange)="filtrarVentas()" [(ngModel)]="filtroStatus">
+                <ion-select-option value="">Todos</ion-select-option>
+                <ion-select-option value="pendiente">Pendiente</ion-select-option>
+                <ion-select-option value="pagado">Pagado</ion-select-option>
+                <ion-select-option value="cancelado">Cancelado</ion-select-option>
+              </ion-select>
+            </th>
             <th>Detalles</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let venta of ventasFiltradas">
+          <tr *ngFor="let venta of ventasFiltradas; else estadoVacio">
             <td>{{ venta.id }}</td>
             <td>{{ venta.cantidad }}</td>
             <td>{{ venta.usuario }}</td>
-            <td>{{ venta.metodoPago }}</td>
+            <td><span class="badge badge-info">{{ venta.metodoPago }}</span></td>
             <td>${{ venta.total.toFixed(2) }}</td>
             <td>{{ venta.fecha }}</td>
             <td>{{ venta.hora }}</td>
-            <td>{{ venta.status }}</td>
+            <td>
+              <span class="badge" [ngClass]="statusClass(venta.status)">{{ venta.status }}</span>
+            </td>
             <td>
               <button (click)="verDetalles(venta)" class="ver-ticket">
                 Ver ticket
@@ -83,6 +111,28 @@
         </tbody>
       </table>
     </div>
+
+    <ng-template #estadoVacio>
+      <tr>
+        <td colspan="9">
+          <ion-item lines="none">
+            <ion-icon name="clipboard-outline" slot="start"></ion-icon>
+            <ion-label>No hay ventas para mostrar</ion-label>
+          </ion-item>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #skeletonTabla>
+      <ion-card>
+        <ion-card-content>
+          <ion-skeleton-text animated style="width: 60%; height: 16px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 100%; height: 14px; margin-top:8px"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 100%; height: 14px; margin-top:8px"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 80%; height: 14px; margin-top:8px"></ion-skeleton-text>
+        </ion-card-content>
+      </ion-card>
+    </ng-template>
 
     <!-- Total vendido -->
     <div class="total-vendido">
@@ -133,3 +183,13 @@
     </div>
   </div>
 </ion-content>
+<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab-button color="success" (click)="exportarCSV()" aria-label="Exportar ventas a CSV">
+    <ion-icon name="download"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-list side="top">
+    <ion-fab-button color="primary" (click)="filtrarVentas()" aria-label="Refrescar lista">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
+  </ion-fab-list>
+</ion-fab>

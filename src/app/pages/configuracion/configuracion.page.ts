@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsersService } from 'src/app/services/users.service'; // servicio HTTP
+import { NotificationService } from 'src/app/core/services/notification.service';
 import { firstValueFrom } from 'rxjs';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-configuracion',
@@ -13,11 +15,21 @@ export class ConfiguracionPage implements OnInit {
   editForm!: FormGroup;
   emailUsuario: string = '';
   usuarioId!: number; // Id del usuario para update
+  hasUser: boolean = false;
 
-  constructor(private fb: FormBuilder, private userS: UsersService) {}
+  constructor(private fb: FormBuilder, private userS: UsersService, private notify: NotificationService, private menuCtrl: MenuController) {
+    // Inicializar inmediatamente para evitar errores de plantilla antes de ngOnInit
+    this.editForm = this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      apellido: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      imagen: [''],
+      newPassword: [''],
+    });
+  }
 
-  ngOnInit() {
-    this.initForm();
+  async ngOnInit() {
+    // El formulario ya está inicializado en el constructor
+    try { await this.menuCtrl.close('main-menu'); } catch {}
     this.cargarDatosUsuario();
   }
 
@@ -31,15 +43,28 @@ export class ConfiguracionPage implements OnInit {
   }
 
   cargarDatosUsuario() {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user) {
-      this.usuarioId = user.id;
-      this.emailUsuario = user.email || '';
+    // Intentar obtener usuario desde UsersService y fallback a localStorage
+    const fromService = this.userS.getCurrentUser?.() || null;
+    const fromStorage = (() => {
+      try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch { return null; }
+    })();
+    const user = fromService || fromStorage;
+
+    const uid = user?.id ?? user?._id;
+    if (user && uid) {
+      this.hasUser = true;
+      this.usuarioId = uid;
+      this.emailUsuario = user.email || user.correo || '';
       this.editForm.patchValue({
-        nombre: user.nombre || '',
-        apellido: user.apellido || '',
-        imagen: user.imagen || '',
+        nombre: user.nombre || user.firstName || '',
+        apellido: user.apellido || user.lastName || '',
+        imagen: user.imagen || user.avatar || '',
       });
+    } else {
+      this.hasUser = false;
+      // Limpiar formulario para evitar valores fantasmas
+      this.editForm.reset({ nombre: '', apellido: '', imagen: '', newPassword: '' });
+      this.emailUsuario = '';
     }
   }
 
@@ -66,7 +91,7 @@ export class ConfiguracionPage implements OnInit {
 
     try {
       await firstValueFrom(this.userS.editarUsuario(this.usuarioId, dataToSend));
-      alert('Cambios guardados correctamente');
+      this.notify.success('Cambios guardados correctamente');
 
       // Actualizar localStorage con nuevos datos (opcional)
       const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -80,7 +105,7 @@ export class ConfiguracionPage implements OnInit {
       this.editForm.markAsUntouched();
     } catch (error: any) {
       console.error('Error al guardar cambios:', error);
-      alert('Error al guardar cambios: ' + (error.error?.message || error.message || 'Error desconocido'));
+      this.notify.error('Error al guardar cambios: ' + (error.error?.message || error.message || 'Error desconocido'));
     }
   }
 

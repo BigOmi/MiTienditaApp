@@ -1,63 +1,88 @@
-<ion-content class="ion-padding">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title color="danger">Edit Your Profile</ion-card-title>
-    </ion-card-header>
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-title>Configuración</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-    <ion-card-content>
-      <form [formGroup]="editForm" (ngSubmit)="guardarCambios()">
-        <ion-row>
-          <ion-col size="12" size-md="6">
-            <ion-item lines="full" color="light" class="rounded-item">
-              <ion-label position="floating" color="primary">Nombre</ion-label>
-              <ion-input formControlName="nombre" type="text"></ion-input>
-            </ion-item>
-            <ion-text color="danger" *ngIf="editForm.controls['nombre'].invalid && editForm.controls['nombre'].touched" class="error-text">
-              Nombre es obligatorio.
-            </ion-text>
-          </ion-col>
-
-          <ion-col size="12" size-md="6">
-            <ion-item lines="full" color="light" class="rounded-item">
-              <ion-label position="floating" color="primary">Apellido</ion-label>
-              <ion-input formControlName="apellido" type="text"></ion-input>
-            </ion-item>
-            <ion-text color="danger" *ngIf="editForm.controls['apellido'].invalid && editForm.controls['apellido'].touched" class="error-text">
-              Apellido es obligatorio.
-            </ion-text>
-          </ion-col>
-        </ion-row>
-
-        <ion-row>
-          <ion-col size="12" size-md="6">
-            <!-- Email no editable -->
-            <ion-item lines="full" color="light" class="rounded-item" disabled>
-              <ion-label position="floating" color="medium">Email (No editable)</ion-label>
-              <ion-input [value]="emailUsuario" readonly></ion-input>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-
-        <ion-item lines="full" color="light" class="ion-margin-top rounded-item">
-          <ion-label position="floating" color="primary">Foto (URL)</ion-label>
-          <ion-input formControlName="imagen" type="text"></ion-input>
+<ion-content class="ion-padding" [fullscreen]="true">
+  <ng-container *ngIf="hasUser; else emptyState">
+    <ion-card>
+      <ion-card-header>
+        <ion-item lines="none">
+          <ion-avatar slot="start">
+            <img [src]="editForm.get('imagen')?.value || 'assets/user.jpeg'" alt="Avatar" />
+          </ion-avatar>
+          <ion-label>
+            <ion-card-title>Mi perfil</ion-card-title>
+            <p class="ion-text-wrap ion-text-capitalize">{{ editForm.get('nombre')?.value }} {{ editForm.get('apellido')?.value }}</p>
+            <ion-note>{{ emailUsuario }}</ion-note>
+          </ion-label>
         </ion-item>
+      </ion-card-header>
 
-        <ion-text class="ion-margin-top ion-margin-bottom" color="primary" style="font-weight: 600;">Cambiar contraseña</ion-text>
+      <ion-card-content>
+        <form [formGroup]="editForm" (ngSubmit)="guardarCambios()">
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <ion-item lines="full" color="light" class="rounded-item">
+                <ion-label position="floating" color="primary">Nombre</ion-label>
+                <ion-input formControlName="nombre" type="text"></ion-input>
+              </ion-item>
+              <ion-text color="danger" *ngIf="editForm.controls['nombre'].invalid && editForm.controls['nombre'].touched" class="error-text">
+                Nombre es obligatorio.
+              </ion-text>
+            </ion-col>
 
-        <ion-item lines="full" color="light" class="rounded-item ion-margin-bottom">
-          <ion-input formControlName="newPassword" type="password" placeholder="Nueva contraseña"></ion-input>
-        </ion-item>
+            <ion-col size="12" size-md="6">
+              <ion-item lines="full" color="light" class="rounded-item">
+                <ion-label position="floating" color="primary">Apellido</ion-label>
+                <ion-input formControlName="apellido" type="text"></ion-input>
+              </ion-item>
+              <ion-text color="danger" *ngIf="editForm.controls['apellido'].invalid && editForm.controls['apellido'].touched" class="error-text">
+                Apellido es obligatorio.
+              </ion-text>
+            </ion-col>
+          </ion-row>
 
-        <ion-footer class="ion-no-border">
-          <ion-toolbar>
-            <ion-buttons slot="end">
-              <ion-button color="medium" type="button" (click)="cancelar()">Cancelar</ion-button>
-              <ion-button color="success" type="submit" [disabled]="editForm.invalid">Guardar Cambios</ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-        </ion-footer>
-      </form>
-    </ion-card-content>
-  </ion-card>
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <!-- Email no editable -->
+              <ion-item lines="full" color="light" class="rounded-item" disabled>
+                <ion-label position="floating" color="medium">Email (No editable)</ion-label>
+                <ion-input [value]="emailUsuario" readonly></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+
+          <ion-item lines="full" color="light" class="ion-margin-top rounded-item">
+            <ion-label position="floating" color="primary">Foto (URL)</ion-label>
+            <ion-input formControlName="imagen" type="text"></ion-input>
+          </ion-item>
+
+          <ion-text class="ion-margin-top ion-margin-bottom" color="primary" style="font-weight: 600;">Cambiar contraseña</ion-text>
+
+          <ion-item lines="full" color="light" class="rounded-item ion-margin-bottom">
+            <ion-input formControlName="newPassword" type="password" placeholder="Nueva contraseña"></ion-input>
+          </ion-item>
+
+          <div class="btn-row">
+            <ion-button fill="outline" color="medium" type="button" (click)="cancelar()">Cancelar</ion-button>
+            <ion-button color="success" type="submit" [disabled]="editForm.invalid">Guardar Cambios</ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <ion-grid class="ion-padding">
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-icon name="person-circle-outline" size="large" color="medium"></ion-icon>
+          <h3>Sin sesión</h3>
+          <p>No encontramos información de usuario. Inicia sesión nuevamente.</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-template>
 </ion-content>

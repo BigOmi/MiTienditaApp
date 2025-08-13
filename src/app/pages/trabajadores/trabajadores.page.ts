@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { UsersService } from 'src/app/services/users.service';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   standalone: false,
@@ -26,10 +27,13 @@ export class TrabajadoresPage implements OnInit {
   constructor(
     private router: Router,
     private userS: UsersService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private menuCtrl: MenuController
   ) {}
 
   async ngOnInit() {
+    // Cierra el menú si estuviera abierto para evitar overlays/inert sobre el contenido
+    try { await this.menuCtrl.close('main-menu'); } catch {}
     this.initForm();
     await this.loadUsers();
   }

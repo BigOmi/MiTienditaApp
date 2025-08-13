@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { UsersService } from '../../services/users.service';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   standalone: false,
@@ -9,7 +10,7 @@ import { UsersService } from '../../services/users.service';
   styleUrls: ['./login.page.scss'],
 })
 
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit, OnDestroy {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
@@ -19,10 +20,22 @@ export class LoginPage implements OnInit {
 
   constructor(
     private router: Router,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private menuCtrl: MenuController
   ) {}
 
-  ngOnInit() {}
+  async ngOnInit() {
+    // Cierra y deshabilita el menú en la pantalla de login para evitar overlays/aria-hidden
+    try {
+      await this.menuCtrl.close('main-menu');
+      await this.menuCtrl.enable(false, 'main-menu');
+    } catch {}
+  }
+
+  async ngOnDestroy() {
+    // Rehabilita el menú al salir de login si quedara deshabilitado
+    try { await this.menuCtrl.enable(true, 'main-menu'); } catch {}
+  }
 
   onSubmit(event: Event) {
     event.preventDefault();
@@ -32,6 +45,8 @@ export class LoginPage implements OnInit {
         // Guarda token y usuario en localStorage
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
+        // Habilita menú tras autenticación
+        try { this.menuCtrl.enable(true, 'main-menu'); } catch {}
         // Navega a home
         this.router.navigate(['/home'], { replaceUrl: true });
       },

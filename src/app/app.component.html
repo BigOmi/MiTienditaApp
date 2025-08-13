@@ -1,3 +1,88 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <app-topbar *ngIf="!isAuthRoute"></app-topbar>
+
+  <ion-menu *ngIf="!isAuthRoute" side="start" type="overlay" menuId="main-menu" contentId="main-content" class="custom-menu" swipe-gesture="true">
+    <ion-header>
+      <ion-toolbar color="light" class="menu-toolbar">
+        <ion-img src="assets/logo.jpg" alt="Logo" class="menu-logo" aria-label="Logo"></ion-img>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="menu-content">
+      <ion-searchbar placeholder="Buscar en menú" [(ngModel)]="menuQuery" animated></ion-searchbar>
+
+      <ion-list class="menu-list">
+        <ion-list-header class="menu-section">Navegación</ion-list-header>
+
+        <ion-accordion-group>
+          <!-- Principal -->
+          <ion-accordion value="principal">
+            <ion-item slot="header" color="light"><ion-label>Principal</ion-label></ion-item>
+            <div slot="content">
+              <ion-menu-toggle auto-hide="false" *ngFor="let route of routesBySection('Principal')">
+                <ion-item button [routerLink]="route.path" (click)="navigateTo(route.path)"
+                          [class.selected]="selectedPath === route.path" lines="none">
+                  <ion-icon [name]="route.icon" slot="start"></ion-icon>
+                  <ion-label class="menu-label">{{ route.label }}</ion-label>
+                  <ion-badge *ngIf="route.badgeCount" color="danger" slot="end">{{ route.badgeCount }}</ion-badge>
+                </ion-item>
+              </ion-menu-toggle>
+            </div>
+          </ion-accordion>
+
+          <!-- Operaciones -->
+          <ion-accordion value="operaciones">
+            <ion-item slot="header" color="light"><ion-label>Operaciones</ion-label></ion-item>
+            <div slot="content">
+              <ion-menu-toggle auto-hide="false" *ngFor="let route of routesBySection('Operaciones')">
+                <ion-item button [routerLink]="route.path" (click)="navigateTo(route.path)"
+                          [class.selected]="selectedPath === route.path" lines="none">
+                  <ion-icon [name]="route.icon" slot="start"></ion-icon>
+                  <ion-label class="menu-label">{{ route.label }}</ion-label>
+                  <ion-badge *ngIf="route.badgeCount" color="danger" slot="end">{{ route.badgeCount }}</ion-badge>
+                </ion-item>
+              </ion-menu-toggle>
+            </div>
+          </ion-accordion>
+
+          <!-- Catálogos -->
+          <ion-accordion value="catalogos">
+            <ion-item slot="header" color="light"><ion-label>Catálogos</ion-label></ion-item>
+            <div slot="content">
+              <ion-menu-toggle auto-hide="false" *ngFor="let route of routesBySection('Catálogos')">
+                <ion-item button [routerLink]="route.path" (click)="navigateTo(route.path)"
+                          [class.selected]="selectedPath === route.path" lines="none">
+                  <ion-icon [name]="route.icon" slot="start"></ion-icon>
+                  <ion-label class="menu-label">{{ route.label }}</ion-label>
+                  <ion-badge *ngIf="route.badgeCount" color="danger" slot="end">{{ route.badgeCount }}</ion-badge>
+                </ion-item>
+              </ion-menu-toggle>
+            </div>
+          </ion-accordion>
+
+          <!-- Configuración -->
+          <ion-accordion value="config">
+            <ion-item slot="header" color="light"><ion-label>Configuración</ion-label></ion-item>
+            <div slot="content">
+              <ion-menu-toggle auto-hide="false" *ngFor="let route of routesBySection('Configuración')">
+                <ion-item button [routerLink]="route.path" (click)="navigateTo(route.path)"
+                          [class.selected]="selectedPath === route.path" lines="none">
+                  <ion-icon [name]="route.icon" slot="start"></ion-icon>
+                  <ion-label class="menu-label">{{ route.label }}</ion-label>
+                  <ion-badge *ngIf="route.badgeCount" color="danger" slot="end">{{ route.badgeCount }}</ion-badge>
+                </ion-item>
+              </ion-menu-toggle>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+      </ion-list>
+
+      <div class="menu-footer">
+        <ion-note color="light">Versión 1.0.0</ion-note>
+      </div>
+    </ion-content>
+  </ion-menu>
+
+  <ion-router-outlet id="main-content"></ion-router-outlet>
 </ion-app>
+

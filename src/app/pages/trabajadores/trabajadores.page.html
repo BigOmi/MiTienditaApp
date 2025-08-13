@@ -40,30 +40,34 @@
     <!-- Lista de usuarios + formulario de edición debajo de cada uno -->
     <ion-row class="ion-margin-top">
       <ion-col size="12" *ngFor="let usuario of usuariosFiltrados()">
-        <ion-card class="usuario-card">
-          <ion-row class="ion-align-items-center">
-            <ion-col size="3" class="img-mini-col">
-              <ion-avatar class="usuario-avatar">
-                <img [src]="usuario.imagen" alt="Foto" />
-              </ion-avatar>
-            </ion-col>
-
-            <ion-col size="6" class="info-mini-col">
+        <ion-card class="usuario-card card-elevated">
+          <ion-item lines="none" class="usuario-item">
+            <ion-avatar slot="start" class="usuario-avatar">
+              <img [src]="usuario.imagen" alt="Foto" />
+            </ion-avatar>
+            <ion-label>
               <h3 class="usuario-nombre">{{ usuario.nombre }} {{ usuario.apellido }}</h3>
-              <!-- Email eliminado de vista porque no está en DTO -->
-              <p class="usuario-rol">{{ usuario.rol }} | {{ usuario.edad }} años</p>
-              <p class="usuario-fecha">{{ usuario.created_at | date }}</p>
-            </ion-col>
-
-            <ion-col size="3" class="acciones-mini-col">
+              <p class="usuario-fecha">{{ usuario.created_at | date:'mediumDate' }}</p>
+              <div class="badges-row">
+                <ion-chip color="success" class="chip-compact">
+                  <ion-icon name="briefcase-outline"></ion-icon>
+                  <ion-label>{{ usuario.rol }}</ion-label>
+                </ion-chip>
+                <ion-chip color="medium" class="chip-compact" *ngIf="usuario.edad">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  <ion-label>{{ usuario.edad }} años</ion-label>
+                </ion-chip>
+              </div>
+            </ion-label>
+            <ion-buttons slot="end" class="acciones-mini-col">
               <ion-button fill="clear" color="tertiary" size="small" (click)="editarUsuario(usuario)">
                 <ion-icon name="create-outline" slot="icon-only"></ion-icon>
               </ion-button>
               <ion-button fill="clear" color="danger" size="small" (click)="eliminarUsuario(usuario.id)">
                 <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
               </ion-button>
-            </ion-col>
-          </ion-row>
+            </ion-buttons>
+          </ion-item>
         </ion-card>
 
         <!-- Formulario de edición debajo del usuario seleccionado -->
@@ -118,6 +122,20 @@
             </form>
           </ion-card-content>
         </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <!-- Estado de carga -->
+    <ion-row *ngIf="loading">
+      <ion-col class="ion-text-center">
+        <ion-spinner name="crescent"></ion-spinner>
+      </ion-col>
+    </ion-row>
+
+    <!-- Estado vacío -->
+    <ion-row *ngIf="!loading && usuariosFiltrados().length === 0">
+      <ion-col class="ion-text-center">
+        <p>No hay usuarios para mostrar.</p>
       </ion-col>
     </ion-row>
   </ion-grid>

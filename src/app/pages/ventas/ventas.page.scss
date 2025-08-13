@@ -26,6 +26,8 @@
   margin-bottom: 12px;
 }
 
+.acciones-derecha { margin-left: auto; display: flex; align-items: center; }
+
 .buscador {
   --background: var(--ion-color-light);
   --color: var(--ion-color-dark);
@@ -109,6 +111,8 @@
     padding: 10px;
     border-bottom: 1px solid var(--ion-color-light-tint);
   }
+
+  tr:nth-child(even) td { background-color: #fafafa; }
 }
 
 .ver-ticket {
@@ -118,6 +122,20 @@
   border: none;
   cursor: pointer;
 }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-success { background: rgba(24,145,118,0.15); color: #0d6e5b; }
+.badge-warning { background: rgba(255,196,9,0.2); color: #7a5d00; }
+.badge-danger { background: rgba(219,68,68,0.15); color: #8f2a2a; }
+.badge-info { background: rgba(5,46,66,0.12); color: #0a2d3f; }
 
 .total-vendido {
   align-self: flex-end;

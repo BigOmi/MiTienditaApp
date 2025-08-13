@@ -1,13 +1,8 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { HomePage } from './home/home.page';
 import { authGuard } from './guards/auth.guard';
-import { NewProveedorComponent } from './components/new-proveedor/new-proveedor.component';
 import { NuevaVentaComponent } from './components/nueva-venta/nueva-venta.component';
-import { NewEmpleadoPage } from './components/new-empleado/new-empleado.page';
 import { NewCategoriaComponent } from './components/new-categoria/new-categoria.component';
-import { NewCompraComponent } from './components/new-compra/new-compra.component';
-import { VentasPage } from './pages/ventas/ventas.page';
 
 const routes: Routes = [
   {
@@ -25,8 +20,12 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    component: HomePage,
     canActivate: [authGuard],
+    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
+  },
+
+  // Las rutas hijas se manejan dentro de HomePageRoutingModule
+  /*
     children: [
       {
       path: '',
@@ -39,7 +38,7 @@ const routes: Routes = [
       },
       {
         path: 'ventas',
-        component: VentasPage
+        loadChildren: () => import('./pages/ventas/ventas.module').then( m => m.VentasPageModule)
       },
       {
         path: 'productos',
@@ -61,20 +60,27 @@ const routes: Routes = [
   },
 
     ]
-  },
+  },*/
 
   {
     path: 'new-proveedor',
     canActivate: [authGuard],
-    component: NewProveedorComponent
+    loadChildren: () => import('./components/new-proveedor/new-proveedor.module').then( m => m.NewProveedorModule)
   },
-  { path: 'new-compra',
-    canActivate: [authGuard],
-    component: NewCompraComponent},
   {
-  path: 'new-empleado',
-  canActivate: [authGuard],
-  component: NewEmpleadoPage
+    path: 'new-proveedor/:id',
+    canActivate: [authGuard],
+    loadChildren: () => import('./components/new-proveedor/new-proveedor.module').then( m => m.NewProveedorModule)
+  },
+  {
+    path: 'new-compra',
+    canActivate: [authGuard],
+    loadChildren: () => import('./components/new-compra/new-compra.module').then( m => m.NewCompraModule)
+  },
+  {
+    path: 'new-empleado',
+    canActivate: [authGuard],
+    loadChildren: () => import('./components/new-empleado/new-empleado.module').then( m => m.NewEmpleadoPageModule)
   },
     { path: 'new-venta',
     canActivate: [authGuard],

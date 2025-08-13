@@ -21,12 +21,36 @@
             <ion-card-title class="text-tertiary">Ventas por mes y por día</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <div style="height: 300px;">
+            <div class="chart-toolbar">
+              <ion-select interface="popover" placeholder="Todas las categorías" [value]="categoriaSeleccionada" (ionChange)="setCategoria($event.detail.value)" size="small">
+                <ion-select-option *ngFor="let c of categoriasDisponibles" [value]="c">{{ c }}</ion-select-option>
+              </ion-select>
+              <ion-segment [(ngModel)]="rangoSeleccionado" (ionChange)="setRango($event.detail.value)" value="30d" mode="md">
+                <ion-segment-button value="7d">
+                  <ion-label>7 días</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="30d">
+                  <ion-label>30 días</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="12m">
+                  <ion-label>12 meses</ion-label>
+                </ion-segment-button>
+              </ion-segment>
+            </div>
+            <div class="chart-wrapper">
               <canvas baseChart
                 [data]="lineChartData"
                 [options]="lineChartOptions"
                 [type]="'line'">
               </canvas>
+            </div>
+            <div class="chart-legend">
+              <ion-chip color="primary" outline>Mes</ion-chip>
+              <ion-chip color="success" outline>Día</ion-chip>
+              <ion-button size="small" fill="clear" (click)="exportarGraficoCSV()">
+                <ion-icon slot="start" name="download-outline"></ion-icon>
+                Exportar CSV
+              </ion-button>
             </div>
           </ion-card-content>
         </ion-card>
@@ -44,6 +68,53 @@
                 <span class="sale-status">{{ sale.status }}</span>
               </div>
             </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-md="6">
+        <ion-card class="section-card">
+          <ion-card-header>
+            <ion-card-title>Ventas por categoría</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ng-container *ngIf="(doughnutData?.datasets?.[0]?.data?.length || 0) > 0; else noCats">
+              <div style="height: 320px;">
+                <canvas baseChart [data]="doughnutData" [options]="doughnutOptions" [type]="'doughnut'"></canvas>
+              </div>
+            </ng-container>
+            <ng-template #noCats>
+              <div class="empty-state">
+                <ion-icon name="pie-chart-outline" size="large"></ion-icon>
+                <div>No hay ventas por categoría aún.</div>
+              </div>
+            </ng-template>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-md="6">
+        <ion-card class="section-card">
+          <ion-card-header>
+            <ion-card-title>Top productos</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list *ngIf="topProductos?.length; else noTop">
+              <ion-item *ngFor="let p of topProductos">
+                <ion-label>
+                  <div>{{ p.nombre }}</div>
+                  <ion-note color="medium">Vendidos: {{ p.cantidad }} • Ingresos: {{ p.ingresos | currency }}</ion-note>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+            <ng-template #noTop>
+              <div class="empty-state">
+                <ion-icon name="trophy-outline" size="large"></ion-icon>
+                <div>No hay productos destacados todavía.</div>
+              </div>
+            </ng-template>
           </ion-card-content>
         </ion-card>
       </ion-col>
